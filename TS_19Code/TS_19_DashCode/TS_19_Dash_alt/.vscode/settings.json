@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "cs43l22.h": "c",
+        "ft6x06.h": "c",
+        "otm8009a.h": "c",
+        "stm32469i_discovery_eeprom.h": "c",
+        "stm32469i_discovery_lcd.h": "c",
+        "fonts.h": "c",
+        "stm32469i_discovery_qspi.h": "c",
+        "stm32469i_discovery_sd.h": "c",
+        "stm32469i_discovery_sdram.h": "c",
+        "stm32469i_discovery_ts.h": "c",
+        "stm32469i_discovery.h": "c"
+    }
+}
