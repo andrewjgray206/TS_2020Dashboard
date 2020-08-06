@@ -16,7 +16,7 @@
 #include "lvgl.h"
 #include "driver.h"
 
-#include "lv_test_theme_1.h"
+#include "ts_2020Dash.h"
 
 static void hal_init(void);
 static int tick_thread(void *data);

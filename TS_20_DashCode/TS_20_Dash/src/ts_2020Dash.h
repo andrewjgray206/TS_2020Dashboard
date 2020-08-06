@@ -1,10 +1,10 @@
 /**
- * @file lv_test_theme.h
+ * @file ts_2020dash.h
  *
  */
 
-#ifndef LV_TEST_THEME_H
-#define LV_TEST_THEME_H
+#ifndef DEMO_H
+#define DEMO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,20 +13,19 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
+
 #ifdef LV_CONF_INCLUDE_SIMPLE
-#include "lvgl.h"
-#include "lv_ex_conf.h"
+#include <lvgl.h>
 #else
 #include "../../../lvgl/lvgl.h"
-#include "../../../lv_ex_conf.h"
 #endif
-
-#if LV_USE_TESTS
 
 
 /*********************
  *      DEFINES
  *********************/
+#define LV_USE_DEMO 1
+#define LV_DEMO_WALLPAPER  1
 
 /**********************
  *      TYPEDEFS
@@ -37,16 +36,16 @@ extern "C" {
  **********************/
 
 /**
- * Create a test screen with a lot objects and apply the given theme on them
- * @param th pointer to a theme
+ * Create a demo application
  */
-void lv_test_theme_1(lv_theme_t *th);
+void demo_create(void);
 
 /**********************
  *      MACROS
  **********************/
 
-#endif /*LV_USE_TESTS*/
+#endif /*USE_LV_DEMO*/
 
-
-#endif /*LV_TEST_THEME_H*/
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

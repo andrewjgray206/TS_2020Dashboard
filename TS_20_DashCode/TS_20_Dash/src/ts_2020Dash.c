@@ -1,12 +1,12 @@
  /**
- * @file lv_test_theme_1.c
+ * @file ts_2020Dash.c
  *
  */
 
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_test_theme_1.h"
+#include "ts_2020Dash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -27,6 +27,8 @@ static void create_tab2(lv_obj_t * parent, lv_obj_t * header);
 static void bar_set_value(lv_obj_t * bar, int16_t value);
 static void header_create(lv_obj_t * parent);
 static void bar_event_cb(lv_obj_t * slider, lv_event_t event);
+
+//hoping this works
 
 /**********************
  *  STATIC VARIABLES

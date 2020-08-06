@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    stm32f412vx.h
+  * @file    stm32f412rx.h
   * @author  MCD Application Team
-  * @brief   CMSIS STM32F412Vx Device Peripheral Access Layer Header File.
+  * @brief   CMSIS STM32F412Rx Device Peripheral Access Layer Header File.
   *
   *          This file contains:
   *           - Data structures and the address mapping for all peripherals
@@ -43,12 +43,12 @@
   * @{
   */
 
-/** @addtogroup stm32f412vx
+/** @addtogroup stm32f412rx
   * @{
   */
     
-#ifndef __STM32F412Vx_H
-#define __STM32F412Vx_H
+#ifndef __STM32F412Rx_H
+#define __STM32F412Rx_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -14474,7 +14474,7 @@ typedef struct
 }
 #endif /* __cplusplus */
 
-#endif /* __STM32F412Vx_H */
+#endif /* __STM32F412Rx_H */
 
 
 
