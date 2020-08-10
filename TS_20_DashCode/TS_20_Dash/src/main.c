@@ -27,7 +27,7 @@ int main(void)
 
 	hw_init();
 
-  lv_test_theme_1(lv_theme_night_init(63488, NULL));
+  lv_theme(lv_theme_night_init(63488, NULL));
   
 	hw_loop();
 }
