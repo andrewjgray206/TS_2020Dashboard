@@ -20,7 +20,7 @@
 */
 
 /**
- *  \file SDL_test_harness.h
+ *  \file SDL_test_crc32.h
  *
  *  Include file for SDL test framework.
  *
@@ -28,13 +28,13 @@
  */
 
 /*
-  Defines types for test case definitions and the test execution harness API.
 
-  Based on original GSOC code by Markus Kauppila <markus.kauppila@gmail.com>
+ Implements CRC32 calculations (default output is Perl String::CRC32 compatible).
+
 */
 
-#ifndef SDL_test_h_arness_h
-#define SDL_test_h_arness_h
+#ifndef SDL_test_crc32_h_
+#define SDL_test_crc32_h_
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -43,84 +43,74 @@ extern "C" {
 #endif
 
 
-/* ! Definitions for test case structures */
-#define TEST_ENABLED  1
-#define TEST_DISABLED 0
+/* ------------ Definitions --------- */
 
-/* ! Definition of all the possible test return values of the test case method */
-#define TEST_ABORTED        -1
-#define TEST_STARTED         0
-#define TEST_COMPLETED       1
-#define TEST_SKIPPED         2
+/* Definition shared by all CRC routines */
 
-/* ! Definition of all the possible test results for the harness */
-#define TEST_RESULT_PASSED              0
-#define TEST_RESULT_FAILED              1
-#define TEST_RESULT_NO_ASSERT           2
-#define TEST_RESULT_SKIPPED             3
-#define TEST_RESULT_SETUP_FAILURE       4
+#ifndef CrcUint32
+ #define CrcUint32  unsigned int
+#endif
+#ifndef CrcUint8
+ #define CrcUint8   unsigned char
+#endif
 
-/* !< Function pointer to a test case setup function (run before every test) */
-typedef void (*SDLTest_TestCaseSetUpFp)(void *arg);
-
-/* !< Function pointer to a test case function */
-typedef int (*SDLTest_TestCaseFp)(void *arg);
-
-/* !< Function pointer to a test case teardown function (run after every test) */
-typedef void  (*SDLTest_TestCaseTearDownFp)(void *arg);
+#ifdef ORIGINAL_METHOD
+ #define CRC32_POLY 0x04c11db7   /* AUTODIN II, Ethernet, & FDDI */
+#else
+ #define CRC32_POLY 0xEDB88320   /* Perl String::CRC32 compatible */
+#endif
 
 /**
- * Holds information about a single test case.
+ * Data structure for CRC32 (checksum) computation
  */
-typedef struct SDLTest_TestCaseReference {
-    /* !< Func2Stress */
-    SDLTest_TestCaseFp testCase;
-    /* !< Short name (or function name) "Func2Stress" */
-    char *name;
-    /* !< Long name or full description "This test pushes func2() to the limit." */
-    char *description;
-    /* !< Set to TEST_ENABLED or TEST_DISABLED (test won't be run) */
-    int enabled;
-} SDLTest_TestCaseReference;
+  typedef struct {
+    CrcUint32    crc32_table[256]; /* CRC table */
+  } SDLTest_Crc32Context;
+
+/* ---------- Function Prototypes ------------- */
 
 /**
- * Holds information about a test suite (multiple test cases).
+ * \brief Initialize the CRC context
+ *
+ * Note: The function initializes the crc table required for all crc calculations.
+ *
+ * \param crcContext        pointer to context variable
+ *
+ * \returns 0 for OK, -1 on error
+ *
  */
-typedef struct SDLTest_TestSuiteReference {
-    /* !< "PlatformSuite" */
-    char *name;
-    /* !< The function that is run before each test. NULL skips. */
-    SDLTest_TestCaseSetUpFp testSetUp;
-    /* !< The test cases that are run as part of the suite. Last item should be NULL. */
-    const SDLTest_TestCaseReference **testCases;
-    /* !< The function that is run after each test. NULL skips. */
-    SDLTest_TestCaseTearDownFp testTearDown;
-} SDLTest_TestSuiteReference;
+ int SDLTest_Crc32Init(SDLTest_Crc32Context * crcContext);
 
 
 /**
- * \brief Generates a random run seed string for the harness. The generated seed will contain alphanumeric characters (0-9A-Z).
+ * \brief calculate a crc32 from a data block
  *
- * Note: The returned string needs to be deallocated by the caller.
+ * \param crcContext         pointer to context variable
+ * \param inBuf              input buffer to checksum
+ * \param inLen              length of input buffer
+ * \param crc32              pointer to Uint32 to store the final CRC into
  *
- * \param length The length of the seed string to generate
+ * \returns 0 for OK, -1 on error
  *
- * \returns The generated seed string
  */
-char *SDLTest_GenerateRunSeed(const int length);
+int SDLTest_Crc32Calc(SDLTest_Crc32Context * crcContext, CrcUint8 *inBuf, CrcUint32 inLen, CrcUint32 *crc32);
+
+/* Same routine broken down into three steps */
+int SDLTest_Crc32CalcStart(SDLTest_Crc32Context * crcContext, CrcUint32 *crc32);
+int SDLTest_Crc32CalcEnd(SDLTest_Crc32Context * crcContext, CrcUint32 *crc32);
+int SDLTest_Crc32CalcBuffer(SDLTest_Crc32Context * crcContext, CrcUint8 *inBuf, CrcUint32 inLen, CrcUint32 *crc32);
+
 
 /**
- * \brief Execute a test suite using the given run seed and execution key.
+ * \brief clean up CRC context
  *
- * \param testSuites Suites containing the test case.
- * \param userRunSeed Custom run seed provided by user, or NULL to autogenerate one.
- * \param userExecKey Custom execution key provided by user, or 0 to autogenerate one.
- * \param filter Filter specification. NULL disables. Case sensitive.
- * \param testIterations Number of iterations to run each test case.
+ * \param crcContext        pointer to context variable
  *
- * \returns Test run result; 0 when all tests passed, 1 if any tests failed.
- */
-int SDLTest_RunSuites(SDLTest_TestSuiteReference *testSuites[], const char *userRunSeed, Uint64 userExecKey, const char *filter, int testIterations);
+ * \returns 0 for OK, -1 on error
+ *
+*/
+
+int SDLTest_Crc32Done(SDLTest_Crc32Context * crcContext);
 
 
 /* Ends C function definitions when using C++ */
@@ -129,6 +119,6 @@ int SDLTest_RunSuites(SDLTest_TestSuiteReference *testSuites[], const char *user
 #endif
 #include "close_code.h"
 
-#endif /* SDL_test_h_arness_h */
+#endif /* SDL_test_crc32_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

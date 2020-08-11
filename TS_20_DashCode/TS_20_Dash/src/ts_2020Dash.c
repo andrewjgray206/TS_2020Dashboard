@@ -1,12 +1,12 @@
  /**
- * @file lv_test_theme_1.c
+ * @file ts_2020Dash.c
  *
  */
 
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_test_theme_1.h"
+#include "ts_2020Dash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -22,11 +22,12 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void create_tab1(lv_obj_t * parent,lv_obj_t * header);
-static void create_tab2(lv_obj_t * parent, lv_obj_t * header);
+static void create_screen1(lv_obj_t * parent,lv_obj_t * header); //screen1
+static void create_screen2(lv_obj_t * parent, lv_obj_t * header); //screen2
 static void bar_set_value(lv_obj_t * bar, int16_t value);
-static void header_create(lv_obj_t * parent);
-static void bar_event_cb(lv_obj_t * slider, lv_event_t event);
+static void header_create(lv_obj_t * parent); //creates the header container.
+static void bar_event_cb(lv_obj_t * slider, lv_event_t event); //allows sliding between the screens.
+
 
 /**********************
  *  STATIC VARIABLES
@@ -45,7 +46,7 @@ static lv_obj_t * bar_value;
  * Create a test screen with a lot objects and apply the given theme on them
  * @param th pointer to a theme
  */
-void lv_test_theme_1(lv_theme_t * th)
+void lv_theme(lv_theme_t * th) //sets the screen up.
 {
     lv_theme_set_current(th);
     th = lv_theme_get_current();    
@@ -53,22 +54,24 @@ void lv_test_theme_1(lv_theme_t * th)
     lv_disp_load_scr(scr);
 
     lv_obj_t * tv = lv_tabview_create(scr, NULL); //allows us to add tabs in more easily later.
-    //lv_obj_set_width(tv, 800);
-    //lv_obj_set_height(tv, 480);
     lv_obj_set_size(tv, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL));
     lv_obj_t * tab1 = lv_tabview_add_tab(tv, "Home Screen"); //tab1.
     
-    lv_obj_t * tab2 = lv_tabview_add_tab(tv,"Tab2");
+    lv_obj_t * tab2 = lv_tabview_add_tab(tv,"Tab2"); //second screen.
 
     lv_tabview_set_btns_hidden(tv, true); //hides the tab buttons, but allows us to implement them later on.
 
-    create_tab1(tab1,header);
-    create_tab2(tab2, header);
+    create_screen1(tab1,header); //creates the two screens.
+    create_screen2(tab2, header);
 }
 
 static void header_create(lv_obj_t * parent) //uses h as its parent.
 {
-    header = lv_cont_create(parent, NULL); //creates the header as a container.
+    /* This function creates the header of the display
+    * and uses it as a container for the rest of the
+    * things to be drawn below it. 
+    * */
+    header = lv_cont_create(parent, NULL); 
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
     lv_obj_align(header,parent,LV_ALIGN_CENTER,0,0);
 
@@ -92,7 +95,7 @@ static void header_create(lv_obj_t * parent) //uses h as its parent.
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static void create_tab1(lv_obj_t * parent, lv_obj_t * header)
+static void create_screen1(lv_obj_t * parent, lv_obj_t * header)
 {
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_CENTER);
@@ -124,7 +127,6 @@ static void create_tab1(lv_obj_t * parent, lv_obj_t * header)
 
     /* Call the header create function, using h as its parent. */
     header_create(h);
-    //lv_obj_align(h, );
 
     lv_obj_t * label1 = lv_label_create(h,NULL);
     lv_label_set_text(label1,"Battery        ");
@@ -165,7 +167,7 @@ static void create_tab1(lv_obj_t * parent, lv_obj_t * header)
 
 }
 
-static void create_tab2(lv_obj_t * parent, lv_obj_t * header)
+static void create_screen2(lv_obj_t * parent, lv_obj_t * header) //second screen.
 {
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
@@ -242,9 +244,6 @@ static void create_tab2(lv_obj_t * parent, lv_obj_t * header)
     lv_obj_t * sw_label = lv_label_create(sw_h ,NULL);
     lv_label_set_text(sw_label, "Traction Control ");
     lv_obj_align(sw_label,sw_h,LV_ALIGN_IN_TOP_MID,0,0);
-
-    //sw = lv_sw_create(sw_h, sw);
-    //lv_sw_on(sw, LV_ANIM_OFF);
 
 }
 

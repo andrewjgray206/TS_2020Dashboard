@@ -16,10 +16,11 @@
 #include "lvgl.h"
 #include "driver.h"
 
-#include "lv_test_theme_1.h"
+#include "ts_2020Dash.h"
 
 static void hal_init(void);
-static int tick_thread(void *data);
+static int tick_thread(void *data); //explicit declarations.
+static int lv_theme(lv_theme_t *data);
 
 int main(void)
 {
@@ -27,7 +28,7 @@ int main(void)
 
 	hw_init();
 
-  lv_test_theme_1(lv_theme_night_init(63488, NULL));
+  lv_theme(lv_theme_night_init(63488, NULL)); //run the dash code.
   
 	hw_loop();
 }
