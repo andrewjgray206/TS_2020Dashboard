@@ -22,8 +22,8 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void create_screen1(lv_obj_t * parent,lv_obj_t * header);
-static void create_screen2(lv_obj_t * parent, lv_obj_t * header);
+static void create_screen1(lv_obj_t * parent,lv_obj_t * header); //screen1
+static void create_screen2(lv_obj_t * parent, lv_obj_t * header); //screen2
 static void bar_set_value(lv_obj_t * bar, int16_t value);
 static void header_create(lv_obj_t * parent); //creates the header container.
 static void bar_event_cb(lv_obj_t * slider, lv_event_t event); //allows sliding between the screens.
@@ -46,7 +46,7 @@ static lv_obj_t * bar_value;
  * Create a test screen with a lot objects and apply the given theme on them
  * @param th pointer to a theme
  */
-void lv_theme(lv_theme_t * th)
+void lv_theme(lv_theme_t * th) //sets the screen up.
 {
     lv_theme_set_current(th);
     th = lv_theme_get_current();    
@@ -61,7 +61,7 @@ void lv_theme(lv_theme_t * th)
 
     lv_tabview_set_btns_hidden(tv, true); //hides the tab buttons, but allows us to implement them later on.
 
-    create_screen1(tab1,header);
+    create_screen1(tab1,header); //creates the two screens.
     create_screen2(tab2, header);
 }
 
@@ -167,7 +167,7 @@ static void create_screen1(lv_obj_t * parent, lv_obj_t * header)
 
 }
 
-static void create_screen2(lv_obj_t * parent, lv_obj_t * header)
+static void create_screen2(lv_obj_t * parent, lv_obj_t * header) //second screen.
 {
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
