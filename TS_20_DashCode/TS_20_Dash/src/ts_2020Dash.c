@@ -22,7 +22,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void create_screen1(lv_obj_t * parent,lv_obj_t * header); //screen1
+//static void create_screen1(lv_obj_t * parent,lv_obj_t * header); //screen1
 static void bar_event_cb(lv_obj_t * slider, lv_event_t event); //allows sliding between the screens.
 
 
@@ -40,44 +40,51 @@ static lv_obj_t * bar_value;
  **********************/
 
 /**
- * Create a test screen with a lot objects and apply the given theme on them
+ * Creates the first window
  * @param th pointer to a theme
  */
-void lv_theme(lv_theme_t * th) //sets the screen up.
+void dashInit(lv_theme_t * th) //sets the screen up.
 {
-    /*lv_theme_set_current(th);
-    th = lv_theme_get_current();    
-    lv_obj_t * scr = lv_cont_create(NULL, NULL); //creates the screen scr
-    lv_disp_load_scr(scr);*/
+    /* This integration of LVGL V6 uses a window view
+    * with buttons to navigate between screens. (hopefully)
+    * The window is the main object, becoming the parent for everything
+    * else drawn on the screen. From here i currently don't know
+    * how to align stuff on its own, so i'm doing it manually.
+    * Have fun sussing!*/
 
     lv_obj_t * win = lv_win_create(lv_scr_act(),NULL); //creates a new window
     lv_win_set_title(win,"Hello ts_20");
+    lv_obj_t * btn1 = lv_win_add_btn(win,LV_SYMBOL_WARNING); //first button
+    lv_obj_t * btn2 = lv_win_add_btn(win,LV_SYMBOL_WIFI); //second button.
 
-     //Rineheart temp Label
+
+    lv_obj_t * bar1 = lv_bar_create(win, NULL);
+    lv_bar_set_anim_time(bar1, 2000);
+    lv_bar_set_value(bar1, 20, LV_ANIM_ON);
+
     lv_obj_t * label2 = lv_label_create(win,NULL);
-    lv_label_set_text(label2,"Rineheart Temp        ");
+    lv_label_set_text(label2,"Rineheart Temp");
+    lv_obj_align(label2,bar1,LV_ALIGN_IN_RIGHT_MID,120,0);
 
-    bar_value = lv_label_create(label2,NULL);
-    lv_label_set_text(bar_value, "20");
 
-    lv_obj_t * bar2 = lv_bar_create(label2, NULL);
-    lv_bar_set_anim_time(bar2, 2000);
-    lv_bar_set_value(bar2, 20, LV_ANIM_ON);
+    lv_obj_t * bar2 = lv_bar_create(win,NULL);
+    lv_bar_set_value(bar2,90,LV_ANIM_ON);
+    lv_obj_align(bar2,bar1,LV_ALIGN_IN_BOTTOM_MID,0,45);
 
-    //accumulator temp label
-    lv_obj_t * label3 = lv_label_create(bar2,NULL);
-    lv_label_set_text(label3,"Accumulator Temp        ");
+    lv_obj_t * label3 = lv_label_create(win,NULL);
+    lv_label_set_text(label3,"Acuumulator Temp");
+    lv_obj_align(label3,bar2,LV_ALIGN_IN_RIGHT_MID,120,0);
 
-    //create_screen1(win, header); //creates the two screens.
+
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static void create_screen1(lv_obj_t * parent, lv_obj_t * header)
+/*static void create_screen1(lv_obj_t * parent, lv_obj_t * header) //THIS FUNCTION IS DEFUNCT AT THE MOMENT,HANDY FOR REFERENCE THOUGH.
 {
     //Sets the styling.
-    lv_page_set_scrl_layout(parent, LV_LAYOUT_CENTER);
+    //lv_page_set_scrl_layout(parent, LV_LAYOUT_CENTER);
 
     lv_theme_t * th = lv_theme_get_current();
 
@@ -102,9 +109,9 @@ static void create_screen1(lv_obj_t * parent, lv_obj_t * header)
      * When creating a new widget, if we use h as the parent
      * they will all align nicely, and then we can fine tune
      * using the align functionality of lvgl.
-     *******************************************************/
+     *******************************************************
 
-    /* Call the header create function, using h as its parent. */
+     Call the header create function, using h as its parent. 
 
     lv_obj_t * label1 = lv_label_create(h,NULL);
     lv_label_set_text(label1,"Battery        ");
@@ -114,12 +121,12 @@ static void create_screen1(lv_obj_t * parent, lv_obj_t * header)
     lv_bar_set_anim_time(bar, 2000);
     lv_bar_set_value(bar, 100, LV_ANIM_ON);
 
-    /* Create a label below the slider */
+    Create a label below the slider 
     bar_value = lv_label_create(label1,NULL);
     lv_label_set_text(bar_value, "100");
     lv_obj_align(bar_value,label1,LV_ALIGN_IN_RIGHT_MID,0,0);
 
-    //Rineheart temp Label
+    Rineheart temp Label
     lv_obj_t * label2 = lv_label_create(h,NULL);
     lv_label_set_text(label2,"Rineheart Temp        ");
 
@@ -143,7 +150,7 @@ static void create_screen1(lv_obj_t * parent, lv_obj_t * header)
     lv_bar_set_anim_time(bar3, 2000);
     lv_bar_set_value(bar3, 40, LV_ANIM_ON);
 
-}
+}*/
 
 static void bar_event_cb(lv_obj_t * bar, lv_event_t event)
 {
