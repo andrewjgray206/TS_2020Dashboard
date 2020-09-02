@@ -1,10 +1,10 @@
 /**
- * @file lv_test_theme.h
+ * @file screen3.h
  *
  */
 
-#ifndef LV_TEST_THEME_H
-#define LV_TEST_THEME_H
+#ifndef SCREEN3_H
+#define SCREEN3_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +40,7 @@ extern "C" {
  * Create a test screen with a lot objects and apply the given theme on them
  * @param th pointer to a theme
  */
-void lv_test_theme_1(lv_theme_t *th);
+void screen3Init(lv_theme_t *th);
 
 /**********************
  *      MACROS
@@ -50,3 +50,4 @@ void lv_test_theme_1(lv_theme_t *th);
 
 
 #endif /*LV_TEST_THEME_H*/
+

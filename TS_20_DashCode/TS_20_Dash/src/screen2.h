@@ -1,14 +1,7 @@
 /**
- * @file lv_test_window.h
+ * @file screen2.h
  *
  */
-
-#ifndef LV_TEST_THEME_H
-#define LV_TEST_THEME_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /*********************
  *      INCLUDES
@@ -20,8 +13,6 @@ extern "C" {
 #include "../../../lvgl/lvgl.h"
 #include "../../../lv_ex_conf.h"
 #endif
-
-#if LV_USE_TESTS
 
 
 /*********************
@@ -36,19 +27,10 @@ extern "C" {
  * GLOBAL PROTOTYPES
  **********************/
 
-/**
- * Create a test screen with a lot objects and apply the given theme on them
- * @param th pointer to a theme
- */
-void win_test(void);
-void lv_test_window(lv_theme_t *th);
+void screen2Init(lv_theme_t * th);
 
 /**********************
  *      MACROS
  **********************/
 
-#endif /*LV_USE_TESTS*/
-
-
-#endif /*LV_TEST_THEME_H*/
 

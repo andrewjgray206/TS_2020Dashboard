@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
   * @file    main.c
-  * @author  Ac6
+  * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
   * @version V1.0
-  * @date    01-December-2013
+  * @date    02-09-2020
   * @brief   Default main function.
   ******************************************************************************
 */
@@ -16,33 +16,22 @@
 #include "lvgl.h"
 #include "driver.h"
 
-#include "ts_2020Dash.h"
-#include "lv_test_theme_1.h"
-#include "lv_test_window.h"
+#include "menu.h"
 
-//static void hal_init(void);
-//static int tick_thread(void *data); //explicit declarations.
-static void dashInit(lv_theme_t *data);
-static void lv_test_window(lv_theme_t * data);
-void win_test(void);
+#include "screen1.h"
+#include "screen2.h"
+#include "screen3.h"
 
 int main(void)
 {
 	lv_init();
-
 	hw_init();
 
-  //uncomment to test andys screen
-  //dashInit(lv_theme_night_init(63488, NULL)); //run the dash code.
+  //I wanna make a splash screen, that function will go here.
+  //splashScreen(blah blah);
 
-  //uncomment for main menu tabview screen
-  //lv_test_theme_1(lv_theme_night_init(63488, NULL));
-
-  //uncomment for christian's static dash under dev
-  //lv_test_window(lv_theme_night_init(63488, NULL));
-
-  //uncomment to test closing screens
-  win_test();
+  //runs the main menu, the hub of our dashboard.
+  menuInit(lv_theme_night_init(63488, NULL));
  
 	hw_loop();
 }

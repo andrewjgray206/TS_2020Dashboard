@@ -1,12 +1,16 @@
 /**
- * @file win_test.c
+ * @file screen2.c
  *
  */
 
 /*********************
  *      INCLUDES
  *********************/
-#include "win_test.h"
+#include "screen1.h"
+#include "screen2.h"
+#include "screen3.h"
+#include "menu.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -36,7 +40,7 @@ static lv_obj_t * bar_value;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void win_test(void)
+void screen2Init(lv_theme_t * th)
 {
 
 lv_obj_t * win = lv_win_create(lv_scr_act(), NULL);
@@ -51,8 +55,8 @@ lv_win_add_btn(win, LV_SYMBOL_SETTINGS);        /*Add a setup button*/
 
 /*Add some dummy content*/
 lv_obj_t * txt = lv_label_create(win, NULL);
-lv_label_set_text(txt, "This is the content of the window\n\n"
-                       "You can add control buttons to\n"
+lv_label_set_text(txt, "This is the content of screen2.c\n\n"
+                       "it is a test windowview.\n"
                        "the window header\n\n"
                        "The content area becomes automatically\n"
                        "scrollable is it's large enough.\n\n"

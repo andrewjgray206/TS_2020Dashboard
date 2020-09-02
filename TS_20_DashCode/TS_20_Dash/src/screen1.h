@@ -1,17 +1,17 @@
 /**
- * @file win_test.h
+ * @file screen1.h
  *
  */
+
 
 /*********************
  *      INCLUDES
  *********************/
-#ifdef LV_CONF_INCLUDE_SIMPLE
-#include "lvgl.h"
-#include "lv_ex_conf.h"
+
+#ifdef LV_CONF_INCLUDE_SIMPLE //this is the littlevgl library.
+#include <lvgl.h>
 #else
 #include "../../../lvgl/lvgl.h"
-#include "../../../lv_ex_conf.h"
 #endif
 
 
@@ -27,10 +27,7 @@
  * GLOBAL PROTOTYPES
  **********************/
 
-void win_test(void);
-
 /**********************
  *      MACROS
  **********************/
-
 

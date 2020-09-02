@@ -1,12 +1,16 @@
  /**
- * @file lv_test_theme_1.c
+ * @file menu.c
  *
  */
 
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_test_theme_1.h"
+#include "menu.h"
+#include "screen1.h"
+#include "screen2.h"
+#include "screen3.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -26,10 +30,14 @@
 static void create_tab1(lv_obj_t * parent);
 static void create_tab2(lv_obj_t * parent);
 static void create_tab3(lv_obj_t * parent);
+static void header_create(void);
+
 void exampleBarMovement(lv_obj_t * bar);
 static void bar_set_value(lv_obj_t * bar, int16_t value);
-static void header_create(void);
 static void bar_event_cb(lv_obj_t * slider, lv_event_t event);
+
+static void navButto1Handler(lv_obj_t * obj, lv_event_t event);
+static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 
 /**********************
  *  STATIC VARIABLES
@@ -48,8 +56,9 @@ static lv_obj_t * bar_value;
  * Create a test screen with a lot objects and apply the given theme on them
  * @param th pointer to a theme
  */
-void lv_test_theme_1(lv_theme_t * th)
-{
+void menuInit(lv_theme_t * th)
+{   
+    //BEGIN SCREEN SETUP
     lv_theme_set_current(th);
     th = lv_theme_get_current();    
     lv_obj_t * scr = lv_cont_create(NULL, NULL); //creates the screen scr
@@ -61,13 +70,44 @@ void lv_test_theme_1(lv_theme_t * th)
     lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Tab 2");
     lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Tab 3");
 
-    lv_tabview_set_btns_hidden(tv, true);
+    //END SCREEN SETUP
 
+    lv_tabview_set_btns_hidden(tv, true); //tabs are hidden.
+
+    //BEGIN SCREEN CONTENT.
     create_tab1(tab1);
     create_tab2(tab2);
     create_tab3(tab3);
     header_create();
+
+    //END SCREEN CONTENT
 }
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+
+static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_PRESSED )
+    {
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        //screen1Init(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
+        screen3Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
+static void navButton2Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_PRESSED )
+    {
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        screen1Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
 
 static void header_create(void)
 {
@@ -88,9 +128,6 @@ static void header_create(void)
 
 }
 
-/**********************
- *   STATIC FUNCTIONS
- **********************/
 static void create_tab1(lv_obj_t * parent)
 {
     //Sets the styling.
@@ -145,25 +182,9 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(bar3, 2000);
     lv_bar_set_value(bar3, 60, LV_ANIM_ON);
 
-   /*
-    lv_anim_t a;
-    a.var = bar3;
-    a.start = 0;
-    a.end = 100;
-    a.exec_cb = (lv_anim_exec_xcb_t)bar_set_value;
-    a.path_cb = lv_anim_path_linear;
-    a.ready_cb = NULL;
-    a.act_time = 0;
-    a.time = 1000;
-    a.playback = 1;
-    a.playback_pause = 100;
-    a.repeat = 1;
-    a.repeat_pause = 100;
-    lv_anim_create(&a); */
-
 }
 
-static void create_tab2(lv_obj_t * parent)
+static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
 {
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
@@ -185,14 +206,16 @@ static void create_tab2(lv_obj_t * parent)
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
 
-    lv_obj_t * label = lv_label_create(h,NULL);
-    lv_label_set_text(label,"Motor Temp");
 
-    lv_obj_t * bar = lv_bar_create(h, NULL);
-    lv_obj_set_event_cb(bar, bar_event_cb);
-    lv_bar_set_range(bar, 0, 300);
-    lv_bar_set_anim_time(bar, 2000);
-    lv_bar_set_value(bar, 100, LV_ANIM_ON);
+    lv_obj_t * navButton1 = lv_btn_create(h,NULL);
+    lv_obj_set_event_cb(navButton1, navButton1Handler);
+    lv_obj_t * navButton1Label = lv_label_create(navButton1,NULL);
+    lv_label_set_text(navButton1Label,"To Screen3.c");
+
+    lv_obj_t * navButton2 = lv_btn_create(h,NULL);
+    lv_obj_set_event_cb(navButton2, navButton2Handler);
+    lv_obj_t * navButton2Label = lv_label_create(navButton2,NULL);
+    lv_label_set_text(navButton2Label,"To Screen1.c");
 
 }
 
