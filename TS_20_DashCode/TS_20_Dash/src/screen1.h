@@ -27,6 +27,8 @@
  * GLOBAL PROTOTYPES
  **********************/
 
+void screen1Init(lv_theme_t *th);
+
 /**********************
  *      MACROS
  **********************/

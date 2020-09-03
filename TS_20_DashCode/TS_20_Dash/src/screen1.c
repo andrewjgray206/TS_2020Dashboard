@@ -74,10 +74,9 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
 
     //END SCREEN SETUP
     //START MENU RIBBON BUTTONS
-    lv_obj_t * btn1 = lv_win_add_btn(win,LV_SYMBOL_DIRECTORY); 
-    //lv_obj_t * btn2 = lv_win_add_btn(win,LV_SYMBOL_WIFI); 
-
-    lv_obj_set_event_cb(btn1,btn_event); //each button needs it's own event function.
+    lv_obj_t * close_btn = lv_win_add_btn(win, LV_SYMBOL_CLOSE);  /*Add close button and use built-in close action*/
+    lv_obj_set_event_cb(close_btn, btn_event);
+    lv_win_set_btn_size(win, 30);
 
     //END MENU RIBBON BUTTONS
     //START SCREEN CONTENT.
@@ -109,7 +108,7 @@ static void btn_event(lv_obj_t * obj, lv_event_t event)
 *  is close the screen and navigate to another one. */
 {
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_PRESSED )
+    if ( event == LV_EVENT_RELEASED)
     {
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         menuInit(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.

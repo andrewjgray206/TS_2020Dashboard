@@ -1,6 +1,8 @@
  /**
  * @file menu.c
- *
+ * 
+ * This screen is the menu which is displayed as a tabview, you can scroll across
+ * to make selections and a button will take you to the dash screen selected.
  */
 
 /*********************
@@ -36,8 +38,10 @@ void exampleBarMovement(lv_obj_t * bar);
 static void bar_set_value(lv_obj_t * bar, int16_t value);
 static void bar_event_cb(lv_obj_t * slider, lv_event_t event);
 
-static void navButto1Handler(lv_obj_t * obj, lv_event_t event);
+static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
+static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
+
 
 /**********************
  *  STATIC VARIABLES
@@ -66,6 +70,7 @@ void menuInit(lv_theme_t * th)
 
     lv_obj_t * tv = lv_tabview_create(scr, NULL); //allows us to add tabs in more easily later.
     lv_obj_set_size(tv, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL));
+    lv_obj_set_pos(tv, 0,30);
     lv_obj_t * tab1 = lv_tabview_add_tab(tv, "Home Screen"); //tab1.
     lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Tab 2");
     lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Tab 3");
@@ -90,39 +95,55 @@ void menuInit(lv_theme_t * th)
 static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
 {
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_PRESSED )
+    if ( event == LV_EVENT_RELEASED)
     {
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         //screen1Init(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
-        screen3Init(lv_theme_night_init(63488, NULL));
+        screen1Init(lv_theme_night_init(63488, NULL));
     }
 }
 
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event)
 {
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_PRESSED )
+    if ( event == LV_EVENT_RELEASED)
     {
         lv_obj_del(currentScreen);  //literally just deletes the screen.
-        screen1Init(lv_theme_night_init(63488, NULL));
+        //screen1Init(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
+        screen2Init(lv_theme_night_init(63488, NULL));
     }
 }
+
+static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_RELEASED)
+    {
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        screen3Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
 
 
 static void header_create(void)
 {
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
-    lv_obj_set_height(header, 10);
+    lv_obj_set_height(header, 30);
 
     lv_obj_t * sym = lv_label_create(header, NULL);
-    lv_label_set_text(sym, LV_SYMBOL_GPS LV_SYMBOL_WIFI LV_SYMBOL_BLUETOOTH LV_SYMBOL_VOLUME_MAX);
+    lv_label_set_text(sym, "TS 20");
     lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
 
-    lv_obj_t * clock = lv_label_create(header, NULL);
-    lv_label_set_text(clock, "AMS: Idle");
-    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+    lv_obj_t * ams_state = lv_label_create(header, NULL);
+    lv_label_set_text(ams_state, "AMS STATE: Idle");
+    lv_obj_align(ams_state, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
 
+    lv_obj_t * clock = lv_label_create(header, NULL);
+    lv_label_set_text(clock, "RUN TIME: 0");
+    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+        
     //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
     lv_obj_set_pos(header, 0, 0);
 
@@ -206,16 +227,24 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
 
-
     lv_obj_t * navButton1 = lv_btn_create(h,NULL);
     lv_obj_set_event_cb(navButton1, navButton1Handler);
     lv_obj_t * navButton1Label = lv_label_create(navButton1,NULL);
-    lv_label_set_text(navButton1Label,"To Screen3.c");
+    lv_label_set_text(navButton1Label,"To Screen1.c");
 
     lv_obj_t * navButton2 = lv_btn_create(h,NULL);
     lv_obj_set_event_cb(navButton2, navButton2Handler);
     lv_obj_t * navButton2Label = lv_label_create(navButton2,NULL);
-    lv_label_set_text(navButton2Label,"To Screen1.c");
+    lv_label_set_text(navButton2Label,"To Screen2.c");
+
+    lv_obj_t * navButton3 = lv_btn_create(h,NULL);
+    lv_obj_set_event_cb(navButton3, navButton3Handler);
+    lv_obj_t * navButton3Label = lv_label_create(navButton3,NULL);
+    lv_label_set_text(navButton3Label,"To Screen3.c");
+
+    
+
+    
 
 }
 

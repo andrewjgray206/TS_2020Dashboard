@@ -32,6 +32,7 @@ int main(void)
 
   //runs the main menu, the hub of our dashboard.
   menuInit(lv_theme_night_init(63488, NULL));
+  //screen2Init(lv_theme_night_init(63488, NULL));
  
 	hw_loop();
 }

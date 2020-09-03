@@ -6,6 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
+#include "menu.h"
 #include "screen3.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@
  *  STATIC PROTOTYPES
  **********************/
 static void header_create(void);
+static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 
 
 /**********************
@@ -60,7 +62,26 @@ void screen3Init(lv_theme_t * th)
     //lv_obj_t * btn1 = lv_win_add_btn(win,LV_SYMBOL_WARNING);
     //lv_obj_t * btn2 = lv_win_add_btn(win,LV_SYMBOL_WIFI);
 
+    lv_obj_t * widCon = lv_cont_create(scr, NULL);
+    //lv_obj_set_pos(widCon, 100, 100);
+    lv_obj_align(widCon, scr, LV_ALIGN_CENTER, 0,0);
+    lv_obj_t * navButton1 = lv_btn_create(widCon,NULL);
+    lv_obj_set_event_cb(navButton1, navButton1Handler);
+    lv_obj_t * navButton1Label = lv_label_create(navButton1,NULL);
+    lv_label_set_text(navButton1Label,"To Menu.c");
+
     header_create();
+}
+
+static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_RELEASED)
+    {
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        //screen1Init(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
+        menuInit(lv_theme_night_init(63488, NULL));
+    }
 }
 
 static void header_create(void)
