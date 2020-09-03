@@ -27,12 +27,13 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static void header_create(void);
 static void btn_event(lv_obj_t * obj, lv_event_t event); //btn1 event.
 
 /**********************
  *  STATIC VARIABLES
  **********************/
-
+static lv_obj_t * header;
 /**********************
  *      MACROS
  **********************/
@@ -95,6 +96,33 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_obj_t * label3 = lv_label_create(win,NULL);
     lv_label_set_text(label3,"Acuumulator Temp");
     lv_obj_align(label3,bar2,LV_ALIGN_IN_RIGHT_MID,120,0);
+
+    header_create();
+}
+
+static void header_create(void)
+{
+    header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
+    lv_obj_set_width(header, lv_disp_get_hor_res(NULL) - 30);
+    lv_obj_set_height(header, 30);
+
+    //lv_obj_t * con_btn = lv_btn_create(header, NULL);
+    //lv_obj_align(con_btn, NULL, LV_ALIGN_IN_RIGHT_MID, 0, 0);
+
+    lv_obj_t * sym = lv_label_create(header, NULL);
+    lv_label_set_text(sym, "TS 20");
+    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
+
+    lv_obj_t * ams_state = lv_label_create(header, NULL);
+    lv_label_set_text(ams_state, "AMS STATE: Idle");
+    lv_obj_align(ams_state, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
+
+    lv_obj_t * clock = lv_label_create(header, NULL);
+    lv_label_set_text(clock, "RUN TIME: 0");
+    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+        
+    //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
+    lv_obj_set_pos(header, 0, 0);
 
 }
 
