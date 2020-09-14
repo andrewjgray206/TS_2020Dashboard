@@ -1,9 +1,13 @@
- /**
- * @file menu.c
- * 
- * This screen is the menu which is displayed as a tabview, you can scroll across
- * to make selections and a button will take you to the dash screen selected.
- */
+/**
+  ******************************************************************************
+  * @file    menu.c
+  * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
+  * @version V1.0
+  * @date    02-09-2020
+  * @brief   Menu screens, intitial screen on startup with important information
+  * regarding hardware status.
+  ******************************************************************************
+*/
 
 /*********************
  *      INCLUDES
@@ -152,7 +156,7 @@ static void header_create(void)
 static void create_tab1(lv_obj_t * parent)
 {
     //Sets the styling.
-    lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
+    lv_page_set_scrl_layout(parent, LV_LAYOUT_COL_L);
     
     lv_theme_t * th = lv_theme_get_current();
 
@@ -170,6 +174,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_click(h, false);
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
+    //lv_obj_align(parent, h, LV_ALIGN_IN_LEFT_MID, 0, 0);
 
     lv_obj_t * label = lv_label_create(h,NULL);
     lv_label_set_text(label,"Motor Temp");
