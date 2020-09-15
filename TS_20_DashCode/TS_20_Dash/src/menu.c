@@ -129,7 +129,6 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
 }
 
 
-
 static void header_create(void)
 {
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
@@ -156,7 +155,7 @@ static void header_create(void)
 static void create_tab1(lv_obj_t * parent)
 {
     //Sets the styling.
-    lv_page_set_scrl_layout(parent, LV_LAYOUT_COL_L);
+    //lv_page_set_scrl_layout(parent, LV_LAYOUT_COL_L);
     
     lv_theme_t * th = lv_theme_get_current();
 
@@ -174,7 +173,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_click(h, false);
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
-    //lv_obj_align(parent, h, LV_ALIGN_IN_LEFT_MID, 0, 0);
+    lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 100, 20);
 
     lv_obj_t * label = lv_label_create(h,NULL);
     lv_label_set_text(label,"Motor Temp");
@@ -208,6 +207,21 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(bar3, 2000);
     lv_bar_set_value(bar3, 60, LV_ANIM_ON);
 
+    lv_obj_t * h2 = lv_cont_create(parent, NULL); 
+    lv_obj_set_style(h2, &h_style);
+    lv_obj_set_click(h2, false);
+    lv_cont_set_fit(h2, LV_FIT_TIGHT);
+    lv_cont_set_layout(h2, LV_LAYOUT_COL_M);
+    lv_obj_align(h2, parent, LV_ALIGN_IN_TOP_LEFT, 320, 20);
+
+    //animated bar
+    label = lv_label_create(h2,NULL);
+    lv_label_set_text(label,"Accumulator Voltage");
+
+    lv_obj_t * bar4 = lv_bar_create(h2,NULL);
+    lv_bar_set_anim_time(bar4, 2000);
+    lv_bar_set_value(bar4, 60, LV_ANIM_ON);
+    lv_obj_set_size(bar4, 35, 180);
 }
 
 static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
