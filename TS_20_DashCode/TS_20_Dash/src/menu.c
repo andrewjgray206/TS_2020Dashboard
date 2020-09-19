@@ -52,6 +52,7 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
  **********************/
 static lv_obj_t * header;
 static lv_obj_t * bar_value;
+static lv_obj_t * slider_label;
 /**********************
  *      MACROS
  **********************/
@@ -184,11 +185,11 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(bar, 2000);
     lv_bar_set_value(bar, 100, LV_ANIM_ON);
 
-    /* Create a label below the slider 
-    //bar_value = lv_label_create(lv_scr_act(), NULL);
-    //lv_label_set_text(bar_value, "6");
-    lv_obj_set_auto_realign(bar_value, true);
-    lv_obj_align(bar_value, bar, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);*/
+    lv_obj_t * bar_label = lv_label_create(parent, NULL);
+    lv_label_set_text(bar_label, "0");
+    //lv_obj_set_auto_realign(bar_label, true);
+    //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
+    lv_obj_set_pos(bar_label, 35, 65);
 
     label = lv_label_create(h,NULL);
     lv_label_set_text(label,"Rineheart Temp");
@@ -199,6 +200,12 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_value(bar2, 40, LV_ANIM_ON);
     //lv_bar_set_value(bar2, 38, false);
 
+    lv_obj_t * bar2_label = lv_label_create(parent, NULL);
+    lv_label_set_text(bar2_label, "0");
+    //lv_obj_set_auto_realign(bar_label, true);
+    //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
+    lv_obj_set_pos(bar2_label, 35, 137);
+
     //animated bar
     label = lv_label_create(h,NULL);
     lv_label_set_text(label,"Accumulator Temp");
@@ -206,6 +213,12 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_t * bar3 = lv_bar_create(h,NULL);
     lv_bar_set_anim_time(bar3, 2000);
     lv_bar_set_value(bar3, 60, LV_ANIM_ON);
+
+    lv_obj_t * bar3_label = lv_label_create(parent, NULL);
+    lv_label_set_text(bar3_label, "0");
+    //lv_obj_set_auto_realign(bar_label, true);
+    //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
+    lv_obj_set_pos(bar3_label, 35, 210);
 
     lv_obj_t * h2 = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h2, &h_style);
@@ -222,6 +235,12 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(bar4, 2000);
     lv_bar_set_value(bar4, 60, LV_ANIM_ON);
     lv_obj_set_size(bar4, 35, 180);
+
+    /* Create a label below the slider */
+    slider_label = lv_label_create(h2, NULL);
+    lv_label_set_text(slider_label, "0");
+    lv_obj_set_auto_realign(slider_label, true);
+    lv_obj_align(slider_label, bar4, LV_ALIGN_OUT_TOP_MID, 0, 10);
 }
 
 static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
@@ -260,11 +279,6 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     lv_obj_set_event_cb(navButton3, navButton3Handler);
     lv_obj_t * navButton3Label = lv_label_create(navButton3,NULL);
     lv_label_set_text(navButton3Label,"To Screen3.c");
-
-    
-
-    
-
 }
 
 static void create_tab3(lv_obj_t * parent)

@@ -51,6 +51,8 @@ static void can_test_iterator(lv_task_t * task);
  **********************/
 static lv_obj_t * header;
 static lv_obj_t * ams_label;
+static lv_task_t * task;
+static lv_task_t * testIterator;
 
 /***********************
  * EXTERNAL VARIABLES 
@@ -128,6 +130,8 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
 
     lv_task_t * testIterator = lv_task_create(can_test_iterator,500,LV_TASK_PRIO_MID,NULL);
 
+    
+
 }
 
 /**********************
@@ -137,9 +141,9 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
 static void can_test_iterator(lv_task_t * task)
 {
     ams_state = ams_state + 1;
-        if (ams_state == 8){
-            ams_state = 0;
-        }
+    if (ams_state == 8){
+        ams_state = 0;
+    }
 }
 
 static void ams_task_handler(lv_task_t * task)
@@ -171,6 +175,7 @@ static void btn_event(lv_obj_t * obj, lv_event_t event)
 *  in this case it's button one, and all it's used to do
 *  is close the screen and navigate to another one. */
 {
+    
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
