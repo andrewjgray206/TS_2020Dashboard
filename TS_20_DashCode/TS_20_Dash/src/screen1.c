@@ -41,7 +41,6 @@
 static lv_obj_t * header_create();
 static void btn_event(lv_obj_t * obj, lv_event_t event); //btn1 event.
 static void ams_task_handler(lv_task_t * task);
-
 static void can_test_iterator(lv_task_t * task);
 
 /**********************
@@ -53,12 +52,19 @@ static lv_obj_t * header;
 static lv_obj_t * ams_label;
 static lv_task_t * task;
 static lv_task_t * testIterator;
+static lv_obj_t * warningLine;
+
+//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+//static lv_style_t style_line;
+//static lv_point_t line_points[] = {{0,0},{500,0},{500, 300},{0, 300},{0,0}};
 
 /***********************
  * EXTERNAL VARIABLES 
  * (CAN SIGNALS)
  **********************/
 extern int ams_state;
+extern bool precharge_pressed;
+extern bool drive_pressed;
 
 
 /**********************
@@ -97,8 +103,7 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_disp_load_scr(scr);
 
     lv_obj_t * win = lv_win_create(scr,NULL); 
-    lv_win_set_title(win,"Hello ts_20");
-
+    lv_win_set_title(win,"");
     lv_obj_t * amsLabel = header_create();
 
     //END SCREEN SETUP
@@ -125,12 +130,10 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_label_set_text(label3,"Acuumulator Temp");
     lv_obj_align(label3,bar2,LV_ALIGN_IN_RIGHT_MID,120,0);
 
-    lv_task_t * task = lv_task_create(ams_task_handler,5,LV_TASK_PRIO_LOW,NULL);
 
-
-    lv_task_t * testIterator = lv_task_create(can_test_iterator,500,LV_TASK_PRIO_MID,NULL);
-
-    
+    //START TASK CREATION.
+    task = lv_task_create(ams_task_handler,5,LV_TASK_PRIO_LOW,NULL);
+    testIterator = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
 
 }
 
@@ -138,12 +141,43 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
  *   STATIC FUNCTIONS
  **********************/
 
+/*static void draw_precharge_warning()
+//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+{
+    lv_style_copy(&style_line, &lv_style_plain);
+    style_line.line.width = 10;
+    style_line.line.rounded = 1;
+
+    warningLine = lv_line_create(lv_scr_act(), NULL);
+    lv_line_set_points(warningLine, line_points, 5);     /*Set the points
+    lv_line_set_style(warningLine, LV_LINE_STYLE_MAIN, &style_line);
+}*/
+/*
+static void draw_drive_warning()
+//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+
+{
+    style_line.line.color = LV_COLOR_GREEN;
+}
+*/
 static void can_test_iterator(lv_task_t * task)
 {
-    ams_state = ams_state + 1;
+    ams_state = ams_state + 1; // for ams state
     if (ams_state == 8){
         ams_state = 0;
     }
+    /*switch (precharge_pressed)
+    //UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+
+    {
+    case 0:
+        precharge_pressed =1;
+        break;
+    
+    case 1:
+        precharge_pressed = 0;
+        break;
+    }*/
 }
 
 static void ams_task_handler(lv_task_t * task)
@@ -168,6 +202,20 @@ static void ams_task_handler(lv_task_t * task)
         case 7:
             lv_label_set_text(ams_label,"AMS STATE: 7 Error");
     }
+
+    //START PRECHARGE AND DRIVE PRESSED CHECKS.
+    //UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+
+    /*switch (precharge_pressed)
+    {
+    case 0:
+        lv_obj_set_hidden(warningLine,true);
+        break;
+    
+    case 1:
+        lv_obj_set_hidden(warningLine,false);
+        break;
+    }*/
 }
 
 static void btn_event(lv_obj_t * obj, lv_event_t event)
@@ -179,6 +227,8 @@ static void btn_event(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
+        lv_task_del(task);
+        lv_task_del(testIterator);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         menuInit(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
     }
@@ -189,9 +239,6 @@ static lv_obj_t * header_create()
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL) - 30);
     lv_obj_set_height(header, 30);
-
-    //lv_obj_t * con_btn = lv_btn_create(header, NULL);
-    //lv_obj_align(con_btn, NULL, LV_ALIGN_IN_RIGHT_MID, 0, 0);
 
     ams_label = lv_label_create(header, NULL);
     lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
