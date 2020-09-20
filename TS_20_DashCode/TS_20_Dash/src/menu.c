@@ -51,7 +51,7 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
  *  STATIC VARIABLES
  **********************/
 static lv_obj_t * header;
-static lv_obj_t * bar_value;
+static lv_obj_t * bar_label;
 static lv_obj_t * slider_label;
 /**********************
  *      MACROS
@@ -180,13 +180,16 @@ static void create_tab1(lv_obj_t * parent)
     lv_label_set_text(label,"Motor Temp");
 
     lv_obj_t * bar = lv_bar_create(h, NULL);
-    lv_obj_set_event_cb(bar, bar_event_cb);
+    //lv_obj_set_event_cb(bar, bar_event_cb);
     lv_bar_set_range(bar, 0, 300);
     lv_bar_set_anim_time(bar, 2000);
     lv_bar_set_value(bar, 100, LV_ANIM_ON);
 
-    lv_obj_t * bar_label = lv_label_create(parent, NULL);
-    lv_label_set_text(bar_label, "0");
+    bar_label = lv_label_create(parent, NULL);
+    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf, 4, "%u", lv_bar_get_value(bar));
+    lv_label_set_text(bar_label, buf);
+    //lv_label_set_text(bar_label, "0");
     //lv_obj_set_auto_realign(bar_label, true);
     //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_obj_set_pos(bar_label, 35, 65);
@@ -317,10 +320,10 @@ static void create_tab3(lv_obj_t * parent)
 
 static void bar_event_cb(lv_obj_t * bar, lv_event_t event)
 {
-    if(event == LV_EVENT_VALUE_CHANGED) {
+    if(true) {
         static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u", lv_slider_get_value(bar));
-        lv_label_set_text(bar_value, buf);
+        snprintf(buf, 4, "%u", lv_bar_get_value(bar));
+        lv_label_set_text(bar_label, buf);
     }
 }
 
