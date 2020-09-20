@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#if LV_USE_TESTS
 /*********************
  *      DEFINES
  *********************/
@@ -38,14 +37,11 @@ static void create_tab2(lv_obj_t * parent);
 static void create_tab3(lv_obj_t * parent);
 static void header_create(void);
 
-void exampleBarMovement(lv_obj_t * bar);
-static void bar_set_value(lv_obj_t * bar, int16_t value);
-static void bar_event_cb(lv_obj_t * slider, lv_event_t event);
-
 static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
 
+static void bar_update_task();
 
 /**********************
  *  STATIC VARIABLES
@@ -183,15 +179,16 @@ static void create_tab1(lv_obj_t * parent)
     //lv_obj_set_event_cb(bar, bar_event_cb);
     lv_bar_set_range(bar, 0, 300);
     lv_bar_set_anim_time(bar, 2000);
-    lv_bar_set_value(bar, 100, LV_ANIM_ON);
+    lv_bar_set_value(bar, 250, LV_ANIM_ON);
 
     bar_label = lv_label_create(parent, NULL);
-    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-    snprintf(buf, 4, "%u", lv_bar_get_value(bar));
-    lv_label_set_text(bar_label, buf);
+    //static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    //snprintf(buf, 4, "%u", lv_bar_get_value(bar));
+    //lv_label_set_text(bar_label, buf);
     //lv_label_set_text(bar_label, "0");
     //lv_obj_set_auto_realign(bar_label, true);
     //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
+    lv_label_set_text_fmt(bar_label, "%u", lv_bar_get_value(bar));
     lv_obj_set_pos(bar_label, 35, 65);
 
     label = lv_label_create(h,NULL);
@@ -310,34 +307,9 @@ static void create_tab3(lv_obj_t * parent)
     lv_label_set_text(label,"Motor Temp");
 
     lv_obj_t * bar = lv_bar_create(h, NULL);
-    lv_obj_set_event_cb(bar, bar_event_cb);
     lv_bar_set_range(bar, 0, 300);
     lv_bar_set_anim_time(bar, 2000);
     lv_bar_set_value(bar, 100, LV_ANIM_ON);
 
-}
-#endif /*LV_USE_TESTS*/
-
-static void bar_event_cb(lv_obj_t * bar, lv_event_t event)
-{
-    if(true) {
-        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u", lv_bar_get_value(bar));
-        lv_label_set_text(bar_label, buf);
-    }
-}
-
-static void bar_set_value(lv_obj_t * bar, int16_t value)
-{
-    lv_bar_set_value(bar, value, LV_ANIM_OFF);
-}
-
-void lv_ex_bar_1(void)
-{
-    lv_obj_t * bar1 = lv_bar_create(lv_scr_act(), NULL);
-    lv_obj_set_size(bar1, 200, 30);
-    lv_obj_align(bar1, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_bar_set_anim_time(bar1, 1000);
-    lv_bar_set_value(bar1, 100, LV_ANIM_ON);
 }
 
