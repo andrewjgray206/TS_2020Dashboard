@@ -38,7 +38,8 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static lv_obj_t * header_create();
+static void header_create();
+static void draw_warning_box();
 static void btn_event(lv_obj_t * obj, lv_event_t event); //btn1 event.
 static void ams_task_handler(lv_task_t * task);
 static void can_test_iterator(lv_task_t * task);
@@ -52,11 +53,12 @@ static lv_obj_t * header;
 static lv_obj_t * ams_label;
 static lv_task_t * task;
 static lv_task_t * testIterator;
-static lv_obj_t * warningLine;
+static lv_obj_t * driveWarningLine;
+static lv_obj_t * prechargeWarningLine;
 
 //UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
-//static lv_style_t style_line;
-//static lv_point_t line_points[] = {{0,0},{500,0},{500, 300},{0, 300},{0,0}};
+static lv_style_t style_line;
+static lv_point_t line_points[] = {{0,0},{500,0},{500, 300},{0, 300},{0,0}};
 
 /***********************
  * EXTERNAL VARIABLES 
@@ -104,7 +106,7 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
 
     lv_obj_t * win = lv_win_create(scr,NULL); 
     lv_win_set_title(win,"");
-    lv_obj_t * amsLabel = header_create();
+    header_create();
 
     //END SCREEN SETUP
     //START MENU RIBBON BUTTONS
@@ -131,6 +133,20 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_obj_align(label3,bar2,LV_ALIGN_IN_RIGHT_MID,120,0);
 
 
+    //ALARM BOX
+    lv_style_copy(&style_line, &lv_style_plain);
+    style_line.line.color = LV_COLOR_RED;
+    style_line.line.width = 10;
+    style_line.line.rounded = 1;
+
+    driveWarningLine = lv_line_create(lv_scr_act(), NULL);
+    lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
+    lv_line_set_points(driveWarningLine, line_points, 5);//Set the points
+
+    prechargeWarningLine = lv_line_create(lv_scr_act(),NULL);
+    lv_obj_set_hidden(prechargeWarningLine,true); //start as hidden.
+    lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
+
     //START TASK CREATION.
     task = lv_task_create(ams_task_handler,5,LV_TASK_PRIO_LOW,NULL);
     testIterator = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
@@ -141,43 +157,54 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
  *   STATIC FUNCTIONS
  **********************/
 
-/*static void draw_precharge_warning()
+static void draw_precharge_warning()
 //UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
 {
-    lv_style_copy(&style_line, &lv_style_plain);
-    style_line.line.width = 10;
-    style_line.line.rounded = 1;
+    style_line.line.color = LV_COLOR_ORANGE;
+    lv_line_set_style(prechargeWarningLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(prechargeWarningLine,false);
+}
 
-    warningLine = lv_line_create(lv_scr_act(), NULL);
-    lv_line_set_points(warningLine, line_points, 5);     /*Set the points
-    lv_line_set_style(warningLine, LV_LINE_STYLE_MAIN, &style_line);
-}*/
-/*
 static void draw_drive_warning()
-//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
-
 {
     style_line.line.color = LV_COLOR_GREEN;
+    lv_line_set_style(driveWarningLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(driveWarningLine,false);
 }
-*/
+
+
 static void can_test_iterator(lv_task_t * task)
+/* NOTE: When implementing with real CAN messages
+* This function can be deleted or commented out.
+* As all it does is simulate can messages
+* for simulation testing. */
 {
     ams_state = ams_state + 1; // for ams state
-    if (ams_state == 8){
+    if (ams_state == 8)
+    {
         ams_state = 0;
     }
-    /*switch (precharge_pressed)
-    //UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
-
+    switch (precharge_pressed)
     {
     case 0:
-        precharge_pressed =1;
+        precharge_pressed = 1;
         break;
     
     case 1:
         precharge_pressed = 0;
         break;
-    }*/
+    }
+
+    switch (drive_pressed)
+    {
+    case 0:
+        drive_pressed = 1;
+        break;
+    
+    case 1:
+        drive_pressed = 0;
+        break;
+    }    
 }
 
 static void ams_task_handler(lv_task_t * task)
@@ -204,18 +231,28 @@ static void ams_task_handler(lv_task_t * task)
     }
 
     //START PRECHARGE AND DRIVE PRESSED CHECKS.
-    //UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
-
-    /*switch (precharge_pressed)
+    switch (precharge_pressed)
     {
-    case 0:
-        lv_obj_set_hidden(warningLine,true);
+        case 0:
+            lv_obj_set_hidden(prechargeWarningLine,true);
         break;
-    
-    case 1:
-        lv_obj_set_hidden(warningLine,false);
+        
+        case 1:
+            draw_precharge_warning();
         break;
-    }*/
+    }
+
+    switch (drive_pressed)
+    {
+        case 0:
+            lv_obj_set_hidden(driveWarningLine,true);
+        break;
+        
+        case 1:
+            draw_drive_warning();
+        break;
+
+    }
 }
 
 static void btn_event(lv_obj_t * obj, lv_event_t event)
@@ -223,7 +260,6 @@ static void btn_event(lv_obj_t * obj, lv_event_t event)
 *  in this case it's button one, and all it's used to do
 *  is close the screen and navigate to another one. */
 {
-    
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
@@ -234,7 +270,7 @@ static void btn_event(lv_obj_t * obj, lv_event_t event)
     }
 }
 
-static lv_obj_t * header_create()
+static void header_create()
 {
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL) - 30);
@@ -256,6 +292,4 @@ static lv_obj_t * header_create()
         
     //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
     lv_obj_set_pos(header, 0, 0);
-
-    return ams_label;
 }
