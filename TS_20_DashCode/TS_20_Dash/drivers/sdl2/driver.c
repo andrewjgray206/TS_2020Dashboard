@@ -8,7 +8,7 @@
 
 // Program Variables
 bool precharge_pressed = 0;
-bool drive_pressed = 0;
+bool drive_pressed = 1;
 bool apps_disagree = 0;
 bool trailbraking_active = 0;
 
