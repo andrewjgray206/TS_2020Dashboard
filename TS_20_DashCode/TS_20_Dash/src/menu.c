@@ -20,11 +20,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 /*********************
  *      DEFINES
  *********************/
 
+/*********************
+ *      EXTERN
+ *      VARIABLES
+ *********************/
+extern float max_accum_temp;
+extern uint16_t accum_lowest_voltage;
+extern uint16_t motor_highest_temp;
+extern uint16_t rineheart_highest_temp;
 /**********************
  *      TYPEDEFS
  **********************/
@@ -41,14 +50,29 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
 
-static void bar_update_task();
-
+static void value_handler(lv_task_t * task);
+static void test_iterator(lv_task_t * task);
 /**********************
  *  STATIC VARIABLES
  **********************/
+static lv_task_t * value_handle;
+static lv_task_t * iterate;
+
 static lv_obj_t * header;
-static lv_obj_t * bar_label;
 static lv_obj_t * slider_label;
+
+static lv_obj_t * motor_bar;
+static lv_obj_t * motor_temp_value;
+
+static lv_obj_t * rineheart_bar;
+static lv_obj_t * rineheart_temp_label;
+
+static lv_obj_t * accum_temp;
+static lv_obj_t * accum_temp_label;
+
+static lv_obj_t * accum_volt;
+static lv_obj_t * accum_volt_label;
+
 /**********************
  *      MACROS
  **********************/
@@ -93,67 +117,9 @@ void menuInit(lv_theme_t * th)
  *   STATIC FUNCTIONS
  **********************/
 
-static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
-{
-    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_RELEASED)
-    {
-        lv_obj_del(currentScreen);  //literally just deletes the screen.
-        //screen1Init(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
-        screen1Init(lv_theme_night_init(63488, NULL));
-    }
-}
-
-static void navButton2Handler(lv_obj_t * obj, lv_event_t event)
-{
-    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_RELEASED)
-    {
-        lv_obj_del(currentScreen);  //literally just deletes the screen.
-        //screen1Init(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
-        screen2Init(lv_theme_night_init(63488, NULL));
-    }
-}
-
-static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
-{
-    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_RELEASED)
-    {
-        lv_obj_del(currentScreen);  //literally just deletes the screen.
-        screen3Init(lv_theme_night_init(63488, NULL));
-    }
-}
-
-
-static void header_create(void)
-{
-    header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
-    lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
-    lv_obj_set_height(header, 30);
-
-    lv_obj_t * sym = lv_label_create(header, NULL);
-    lv_label_set_text(sym, "TS 20");
-    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
-
-    lv_obj_t * ams_state = lv_label_create(header, NULL);
-    lv_label_set_text(ams_state, "AMS STATE: Idle");
-    lv_obj_align(ams_state, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
-
-    lv_obj_t * clock = lv_label_create(header, NULL);
-    lv_label_set_text(clock, "RUN TIME: 0");
-    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
-        
-    //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
-    lv_obj_set_pos(header, 0, 0);
-
-}
-
 static void create_tab1(lv_obj_t * parent)
 {
-    //Sets the styling.
-    //lv_page_set_scrl_layout(parent, LV_LAYOUT_COL_L);
-    
+    //Sets the styling.    
     lv_theme_t * th = lv_theme_get_current();
 
     static lv_style_t h_style;
@@ -172,53 +138,40 @@ static void create_tab1(lv_obj_t * parent)
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
     lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 100, 20);
 
-    lv_obj_t * label = lv_label_create(h,NULL);
-    lv_label_set_text(label,"Motor Temp");
+    lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
+    lv_label_set_text(motorTempLabel,"Motor Temp");
 
-    lv_obj_t * bar = lv_bar_create(h, NULL);
-    //lv_obj_set_event_cb(bar, bar_event_cb);
-    lv_bar_set_range(bar, 0, 300);
-    lv_bar_set_anim_time(bar, 2000);
-    lv_bar_set_value(bar, 250, LV_ANIM_ON);
+    motor_bar = lv_bar_create(h, NULL);
+    lv_bar_set_range(motor_bar, 0, 300);
+    lv_bar_set_anim_time(motor_bar, 2000);
+    lv_bar_set_value(motor_bar, 0, LV_ANIM_ON);
 
-    bar_label = lv_label_create(parent, NULL);
-    //static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-    //snprintf(buf, 4, "%u", lv_bar_get_value(bar));
-    //lv_label_set_text(bar_label, buf);
-    //lv_label_set_text(bar_label, "0");
-    //lv_obj_set_auto_realign(bar_label, true);
-    //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
-    lv_label_set_text_fmt(bar_label, "%u", lv_bar_get_value(bar));
-    lv_obj_set_pos(bar_label, 35, 65);
+    motor_temp_value = lv_label_create(parent, NULL);
+    lv_label_set_text_fmt(motor_temp_value, "%u", lv_bar_get_value(motor_temp_value));
+    lv_obj_set_pos(motor_temp_value, 20, 65);
 
-    label = lv_label_create(h,NULL);
-    lv_label_set_text(label,"Rineheart Temp");
+    lv_obj_t * rineheart_label = lv_label_create(h,NULL);
+    lv_label_set_text(rineheart_label,"Rineheart Temp");
 
-    lv_obj_t * bar2 = lv_bar_create(h, NULL);
-    lv_bar_set_range(bar2, 0, 300);
-    lv_bar_set_anim_time(bar2, 2000);
-    lv_bar_set_value(bar2, 40, LV_ANIM_ON);
-    //lv_bar_set_value(bar2, 38, false);
+    rineheart_bar = lv_bar_create(h, NULL);
+    lv_bar_set_range(rineheart_bar, 0, 300);
+    lv_bar_set_anim_time(rineheart_bar, 2000);
+    lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
 
-    lv_obj_t * bar2_label = lv_label_create(parent, NULL);
-    lv_label_set_text(bar2_label, "0");
-    //lv_obj_set_auto_realign(bar_label, true);
-    //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
-    lv_obj_set_pos(bar2_label, 35, 137);
+    rineheart_temp_label = lv_label_create(parent, NULL);
+    lv_label_set_text(rineheart_temp_label, "0");
+    lv_obj_set_pos(rineheart_temp_label, 20, 137);
 
-    //animated bar
-    label = lv_label_create(h,NULL);
-    lv_label_set_text(label,"Accumulator Temp");
+    lv_obj_t * accum_label = lv_label_create(h,NULL);
+    lv_label_set_text(accum_label,"Accumulator Temp");
 
-    lv_obj_t * bar3 = lv_bar_create(h,NULL);
-    lv_bar_set_anim_time(bar3, 2000);
-    lv_bar_set_value(bar3, 60, LV_ANIM_ON);
+    accum_temp = lv_bar_create(h,NULL);
+    lv_bar_set_anim_time(accum_temp, 2000);
+    lv_bar_set_value(accum_temp, 0, LV_ANIM_ON);
 
-    lv_obj_t * bar3_label = lv_label_create(parent, NULL);
-    lv_label_set_text(bar3_label, "0");
-    //lv_obj_set_auto_realign(bar_label, true);
-    //lv_obj_align(bar_label, bar, LV_ALIGN_IN_LEFT_MID, 0, 0);
-    lv_obj_set_pos(bar3_label, 35, 210);
+    accum_temp_label = lv_label_create(parent, NULL);
+    lv_label_set_text(accum_temp_label, "0");
+    lv_obj_set_pos(accum_temp_label, 20, 210);
 
     lv_obj_t * h2 = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h2, &h_style);
@@ -227,20 +180,21 @@ static void create_tab1(lv_obj_t * parent)
     lv_cont_set_layout(h2, LV_LAYOUT_COL_M);
     lv_obj_align(h2, parent, LV_ALIGN_IN_TOP_LEFT, 320, 20);
 
-    //animated bar
-    label = lv_label_create(h2,NULL);
-    lv_label_set_text(label,"Accumulator Voltage");
+    lv_obj_t * accum_vert_label = lv_label_create(h2,NULL);
+    lv_label_set_text(accum_vert_label,"Accumulator Voltage");
 
-    lv_obj_t * bar4 = lv_bar_create(h2,NULL);
-    lv_bar_set_anim_time(bar4, 2000);
-    lv_bar_set_value(bar4, 60, LV_ANIM_ON);
-    lv_obj_set_size(bar4, 35, 180);
+    accum_volt = lv_bar_create(h2,NULL);
+    lv_bar_set_anim_time(accum_volt, 2000);
+    lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
+    lv_obj_set_size(accum_volt, 35, 180);
 
-    /* Create a label below the slider */
-    slider_label = lv_label_create(h2, NULL);
-    lv_label_set_text(slider_label, "0");
-    lv_obj_set_auto_realign(slider_label, true);
-    lv_obj_align(slider_label, bar4, LV_ALIGN_OUT_TOP_MID, 0, 10);
+    accum_volt_label = lv_label_create(h2,NULL);
+    lv_label_set_text(accum_volt_label,"0");
+
+    value_handle = lv_task_create(value_handler,1000,LV_TASK_PRIO_MID,NULL);
+
+    iterate = lv_task_create(test_iterator,100,LV_TASK_PRIO_MID,NULL);
+
 }
 
 static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
@@ -303,13 +257,121 @@ static void create_tab3(lv_obj_t * parent)
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
 
-    lv_obj_t * label = lv_label_create(h,NULL);
-    lv_label_set_text(label,"Motor Temp");
-
-    lv_obj_t * bar = lv_bar_create(h, NULL);
-    lv_bar_set_range(bar, 0, 300);
-    lv_bar_set_anim_time(bar, 2000);
-    lv_bar_set_value(bar, 100, LV_ANIM_ON);
+    lv_obj_t * slider1 = lv_slider_create(h,NULL);
+    lv_obj_t * slider2 = lv_slider_create(h,NULL);
 
 }
+
+static void header_create(void)
+{
+    header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
+    lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
+    lv_obj_set_height(header, 30);
+
+    lv_obj_t * sym = lv_label_create(header, NULL);
+    lv_label_set_text(sym, "TS 20");
+    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
+
+    lv_obj_t * ams_state = lv_label_create(header, NULL);
+    lv_label_set_text(ams_state, "AMS STATE: Idle");
+    lv_obj_align(ams_state, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
+
+    lv_obj_t * clock = lv_label_create(header, NULL);
+    lv_label_set_text(clock, "RUN TIME: 0");
+    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+        
+    //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
+    lv_obj_set_pos(header, 0, 0);
+
+}
+
+static void test_iterator(lv_task_t * task)
+{
+    rineheart_highest_temp ++;
+    accum_lowest_voltage ++;
+    motor_highest_temp ++;
+    max_accum_temp ++;
+    
+    if (motor_highest_temp == 200)
+    {
+        rineheart_highest_temp = 0;
+        accum_lowest_voltage = 0;
+        motor_highest_temp = 0;
+        max_accum_temp = 0;
+    }
+}
+
+static void value_handler(lv_task_t * task)
+{
+    if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
+    {
+        char temp[10] = "";
+        sprintf(temp,"%u",motor_highest_temp);
+        lv_bar_set_value(motor_bar,motor_highest_temp,LV_ANIM_ON);
+        lv_label_set_text(motor_temp_value,temp);
+    }
+
+    if (lv_bar_get_value(accum_temp) != max_accum_temp)
+    {
+        int temperature = max_accum_temp; //convert to an int for printing purposes.
+        char temp[] = "";
+        sprintf(temp,"%i",temperature);
+        lv_bar_set_value(accum_temp,max_accum_temp,LV_ANIM_ON);
+        lv_label_set_text(accum_temp_label,temp);
+        printf(temp);
+    }
+
+    if(lv_bar_get_value(accum_volt)!= accum_lowest_voltage)
+    {
+        char temp[] = "";
+        sprintf(temp,"%u",accum_lowest_voltage);
+        lv_bar_set_value(accum_volt,accum_lowest_voltage,LV_ANIM_ON);
+        lv_label_set_text(accum_volt_label,temp);
+    }
+
+    if (lv_bar_get_value(rineheart_bar) != rineheart_highest_temp)
+    {
+        char temp[] = "";
+        sprintf(temp,"%u",motor_highest_temp);
+        lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
+        lv_label_set_text(rineheart_temp_label,temp);
+    }
+}
+
+static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_RELEASED)
+    {
+        lv_task_del(iterate);
+        lv_task_del(value_handle);
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        screen1Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
+static void navButton2Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_RELEASED)
+    {
+        lv_task_del(iterate);
+        lv_task_del(value_handle);
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        screen2Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
+static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
+{
+    lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
+    if ( event == LV_EVENT_RELEASED)
+    {
+        lv_task_del(iterate);
+        lv_task_del(value_handle);
+        lv_obj_del(currentScreen);  //literally just deletes the screen.
+        screen3Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
 

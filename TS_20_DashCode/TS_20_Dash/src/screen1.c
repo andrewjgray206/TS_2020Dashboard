@@ -56,7 +56,7 @@ static lv_task_t * testIterator;
 static lv_obj_t * driveWarningLine;
 static lv_obj_t * prechargeWarningLine;
 
-//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+
 static lv_style_t style_line;
 static lv_point_t line_points[] = {{0,0},{500,0},{500, 300},{0, 300},{0,0}};
 
@@ -107,8 +107,8 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_obj_t * win = lv_win_create(scr,NULL); 
     lv_win_set_title(win,"");
     header_create();
-
     //END SCREEN SETUP
+    
     //START MENU RIBBON BUTTONS
     lv_obj_t * close_btn = lv_win_add_btn(win, LV_SYMBOL_CLOSE);  /*Add close button and use built-in close action*/
     lv_obj_set_event_cb(close_btn, btn_event);
