@@ -142,8 +142,8 @@ static void create_tab1(lv_obj_t * parent)
     lv_label_set_text(motorTempLabel,"Motor Temp");
 
     motor_bar = lv_bar_create(h, NULL);
-    lv_bar_set_range(motor_bar, 0, 300);
-    lv_bar_set_anim_time(motor_bar, 2000);
+    lv_bar_set_range(motor_bar, 0, 80);
+    lv_bar_set_anim_time(motor_bar, 500);
     lv_bar_set_value(motor_bar, 0, LV_ANIM_ON);
 
     motor_temp_value = lv_label_create(parent, NULL);
@@ -154,8 +154,8 @@ static void create_tab1(lv_obj_t * parent)
     lv_label_set_text(rineheart_label,"Rineheart Temp");
 
     rineheart_bar = lv_bar_create(h, NULL);
-    lv_bar_set_range(rineheart_bar, 0, 300);
-    lv_bar_set_anim_time(rineheart_bar, 2000);
+    lv_bar_set_range(rineheart_bar, 0, 80);
+    lv_bar_set_anim_time(rineheart_bar, 500);
     lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
 
     rineheart_temp_label = lv_label_create(parent, NULL);
@@ -166,7 +166,8 @@ static void create_tab1(lv_obj_t * parent)
     lv_label_set_text(accum_label,"Accumulator Temp");
 
     accum_temp = lv_bar_create(h,NULL);
-    lv_bar_set_anim_time(accum_temp, 2000);
+    lv_bar_set_range(accum_temp, 0, 80);
+    lv_bar_set_anim_time(accum_temp, 500);
     lv_bar_set_value(accum_temp, 0, LV_ANIM_ON);
 
     accum_temp_label = lv_label_create(parent, NULL);
@@ -184,7 +185,8 @@ static void create_tab1(lv_obj_t * parent)
     lv_label_set_text(accum_vert_label,"Accumulator Voltage");
 
     accum_volt = lv_bar_create(h2,NULL);
-    lv_bar_set_anim_time(accum_volt, 2000);
+    lv_bar_set_range(accum_volt, 0, 600);
+    lv_bar_set_anim_time(accum_volt, 500);
     lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_volt, 35, 180);
 
