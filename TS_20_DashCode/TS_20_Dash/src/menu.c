@@ -123,7 +123,6 @@ void menuInit(lv_theme_t * th)
     create_tab2(tab2);
     create_tab3(tab3);
     header_create();
-
     //END SCREEN CONTENT
 }
 
@@ -222,7 +221,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
 
     value_handle = lv_task_create(ams_task_handler,1000,LV_TASK_PRIO_MID,NULL);
-    iterate = lv_task_create(can_test_iterator,100,LV_TASK_PRIO_MID,NULL);
+    iterate = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
 
 }
 

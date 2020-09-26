@@ -53,6 +53,21 @@ static lv_obj_t * prechargeWarningLine;
 static lv_style_t style_line;
 static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
 
+static lv_obj_t * header;
+static lv_obj_t * slider_label;
+
+static lv_obj_t * motor_bar;
+static lv_obj_t * motor_temp_value;
+
+static lv_obj_t * rineheart_bar;
+static lv_obj_t * rineheart_temp_label;
+
+static lv_obj_t * accum_temp;
+static lv_obj_t * accum_temp_label;
+
+static lv_obj_t * accum_volt;
+static lv_obj_t * accum_volt_label;
+
 /***********************
  * EXTERNAL VARIABLES 
  * (CAN SIGNALS)
@@ -60,6 +75,10 @@ static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
 extern int ams_state;
 extern bool precharge_pressed;
 extern bool drive_pressed;
+extern float max_accum_temp;
+extern uint16_t accum_lowest_voltage;
+extern uint16_t motor_highest_temp;
+extern uint16_t rineheart_highest_temp;
 
 /**********************
  *      MACROS
@@ -78,8 +97,7 @@ extern bool drive_pressed;
 
 void screen3Init(lv_theme_t * th)
 {  
-  //START SCREEN SETUP
-    lv_theme_set_current(th);
+      lv_theme_set_current(th);
     th = lv_theme_get_current();    
     lv_obj_t * scr = lv_cont_create(NULL, NULL);
     lv_disp_load_scr(scr);
@@ -87,31 +105,82 @@ void screen3Init(lv_theme_t * th)
     lv_obj_t * win = lv_win_create(scr,NULL); 
     lv_win_set_title(win,"");
     header_create();
+    
+    static lv_style_t h_style;
+    lv_style_copy(&h_style, &lv_style_transp);
+    h_style.body.padding.inner = LV_DPI / 10;
+    h_style.body.padding.left = LV_DPI / 4; 
+    h_style.body.padding.right = LV_DPI / 4;
+    h_style.body.padding.top = LV_DPI / 10;
+    h_style.body.padding.bottom = LV_DPI / 10;
     //END SCREEN SETUP
+
+    lv_obj_t * h = lv_cont_create(win, NULL); 
+    lv_obj_set_style(h, &h_style);
+    lv_obj_set_click(h, false);
+    lv_cont_set_fit(h, LV_FIT_TIGHT);
+    lv_cont_set_layout(h, LV_LAYOUT_COL_M);
+    lv_obj_align(h, win, LV_ALIGN_IN_TOP_LEFT, 100, 20);
     
     //START MENU RIBBON BUTTONS
     lv_obj_t * close_btn = lv_win_add_btn(win, LV_SYMBOL_CLOSE);  /*Add close button and use built-in close action*/
     lv_obj_set_event_cb(close_btn, btn_event);
     lv_win_set_btn_size(win, 30);
 
-    //END MENU RIBBON BUTTONS
-    //START SCREEN CONTENT.
-    lv_obj_t * bar1 = lv_bar_create(win, NULL);
-    lv_bar_set_anim_time(bar1, 2000);
-    lv_bar_set_value(bar1, 20, LV_ANIM_ON);
+    lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
+    lv_label_set_text(motorTempLabel,"Motor Temp");
 
-    lv_obj_t * label2 = lv_label_create(win,NULL);
-    lv_label_set_text(label2,"Rineheart Temp");
-    lv_obj_align(label2,bar1,LV_ALIGN_IN_RIGHT_MID,120,0);
+    motor_bar = lv_bar_create(h, NULL);
+    lv_bar_set_range(motor_bar, 0, 80);
+    lv_bar_set_anim_time(motor_bar, 500);
+    lv_bar_set_value(motor_bar, 0, LV_ANIM_ON);
 
-    lv_obj_t * bar2 = lv_bar_create(win,NULL);
-    lv_bar_set_value(bar2,90,LV_ANIM_ON);
-    lv_obj_align(bar2,bar1,LV_ALIGN_IN_BOTTOM_MID,0,45);
+    motor_temp_value = lv_label_create(h, NULL);
+    lv_label_set_text_fmt(motor_temp_value, "%u", lv_bar_get_value(motor_temp_value));
+    lv_obj_set_pos(motor_temp_value, 20, 65);
 
-    lv_obj_t * label3 = lv_label_create(win,NULL);
-    lv_label_set_text(label3,"Acuumulator Temp");
-    lv_obj_align(label3,bar2,LV_ALIGN_IN_RIGHT_MID,120,0);
+    lv_obj_t * rineheart_label = lv_label_create(h,NULL);
+    lv_label_set_text(rineheart_label,"Rineheart Temp");
 
+    rineheart_bar = lv_bar_create(h, NULL);
+    lv_bar_set_range(rineheart_bar, 0, 80);
+    lv_bar_set_anim_time(rineheart_bar, 500);
+    lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
+
+    rineheart_temp_label = lv_label_create(h, NULL);
+    lv_label_set_text(rineheart_temp_label, "0");
+    lv_obj_set_pos(rineheart_temp_label, 20, 137);
+
+    lv_obj_t * accum_label = lv_label_create(h,NULL);
+    lv_label_set_text(accum_label,"Accumulator Temp");
+
+    accum_temp = lv_bar_create(h,NULL);
+    lv_bar_set_range(accum_temp, 0, 80);
+    lv_bar_set_anim_time(accum_temp, 500);
+    lv_bar_set_value(accum_temp, 0, LV_ANIM_ON);
+
+    accum_temp_label = lv_label_create(h, NULL);
+    lv_label_set_text(accum_temp_label, "0");
+    lv_obj_set_pos(accum_temp_label, 20, 210);
+
+    lv_obj_t * h2 = lv_cont_create(win, NULL); 
+    lv_obj_set_style(h2, &h_style);
+    lv_obj_set_click(h2, false);
+    lv_cont_set_fit(h2, LV_FIT_TIGHT);
+    lv_cont_set_layout(h2, LV_LAYOUT_COL_M);
+    lv_obj_align(h2, win, LV_ALIGN_IN_TOP_LEFT, 320, 20);
+
+    lv_obj_t * accum_vert_label = lv_label_create(h2,NULL);
+    lv_label_set_text(accum_vert_label,"Accumulator Voltage");
+
+    accum_volt = lv_bar_create(h2,NULL);
+    lv_bar_set_range(accum_volt, 0, 600);
+    lv_bar_set_anim_time(accum_volt, 500);
+    lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
+    lv_obj_set_size(accum_volt, 35, 180);
+
+    accum_volt_label = lv_label_create(h2,NULL);
+    lv_label_set_text(accum_volt_label,"0");
 
     //ALARM BOX
     lv_style_copy(&style_line, &lv_style_plain);
@@ -128,7 +197,7 @@ void screen3Init(lv_theme_t * th)
     lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
 
     //START TASK CREATION.
-    task = lv_task_create(ams_task_handler,5,LV_TASK_PRIO_LOW,NULL);
+    task = lv_task_create(ams_task_handler,10,LV_TASK_PRIO_LOW,NULL);
     testIterator = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
 }
 
