@@ -58,7 +58,7 @@ static lv_obj_t * prechargeWarningLine;
 
 
 static lv_style_t style_line;
-static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
+static lv_point_t line_points[] = {{0,0},{500,0},{500, 300},{0, 300},{0,0}};
 
 /***********************
  * EXTERNAL VARIABLES 
