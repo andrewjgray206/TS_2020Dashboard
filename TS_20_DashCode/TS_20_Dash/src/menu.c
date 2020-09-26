@@ -34,6 +34,9 @@ extern float max_accum_temp;
 extern uint16_t accum_lowest_voltage;
 extern uint16_t motor_highest_temp;
 extern uint16_t rineheart_highest_temp;
+extern int ams_state;
+extern bool precharge_pressed;
+extern bool drive_pressed;
 /**********************
  *      TYPEDEFS
  **********************/
@@ -72,6 +75,13 @@ static lv_obj_t * accum_temp_label;
 
 static lv_obj_t * accum_volt;
 static lv_obj_t * accum_volt_label;
+
+static lv_style_t style_line;
+static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
+
+static lv_obj_t * driveWarningLine;
+static lv_obj_t * prechargeWarningLine;
+
 
 /**********************
  *      MACROS
@@ -193,9 +203,21 @@ static void create_tab1(lv_obj_t * parent)
     accum_volt_label = lv_label_create(h2,NULL);
     lv_label_set_text(accum_volt_label,"0");
 
-    value_handle = lv_task_create(value_handler,1000,LV_TASK_PRIO_MID,NULL);
+    lv_style_copy(&style_line, &lv_style_plain);
+    style_line.line.color = LV_COLOR_RED;
+    style_line.line.width = 10;
+    style_line.line.rounded = 1;
 
-    iterate = lv_task_create(test_iterator,100,LV_TASK_PRIO_MID,NULL);
+    driveWarningLine = lv_line_create(lv_scr_act(), NULL);
+    lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
+    lv_line_set_points(driveWarningLine, line_points, 5);//Set the points
+
+    prechargeWarningLine = lv_line_create(lv_scr_act(),NULL);
+    lv_obj_set_hidden(prechargeWarningLine,true); //start as hidden.
+    lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
+
+    value_handle = lv_task_create(value_handler,1000,LV_TASK_PRIO_MID,NULL);
+    iterate = lv_task_create(test_iterator,1000,LV_TASK_PRIO_MID,NULL);
 
 }
 
@@ -287,6 +309,7 @@ static void header_create(void)
 
 }
 
+
 static void test_iterator(lv_task_t * task)
 {
     rineheart_highest_temp ++;
@@ -301,6 +324,49 @@ static void test_iterator(lv_task_t * task)
         motor_highest_temp = 0;
         max_accum_temp = 0;
     }
+
+    ams_state = ams_state + 1; // for ams state
+    if (ams_state == 8)
+    {
+        ams_state = 0;
+    }
+
+    switch (precharge_pressed)
+    {
+    case 0:
+        precharge_pressed = 1;
+        break;
+    
+    case 1:
+        precharge_pressed = 0;
+        break;
+    }
+
+    switch (drive_pressed)
+    {
+    case 0:
+        drive_pressed = 1;
+        break;
+    
+    case 1:
+        drive_pressed = 0;
+        break;
+    }    
+}
+
+static void draw_precharge_warning()
+//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+{
+    style_line.line.color = LV_COLOR_ORANGE;
+    lv_line_set_style(prechargeWarningLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(prechargeWarningLine,false);
+}
+
+static void draw_drive_warning()
+{
+    style_line.line.color = LV_COLOR_GREEN;
+    lv_line_set_style(driveWarningLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(driveWarningLine,false);
 }
 
 static void value_handler(lv_task_t * task)
@@ -337,6 +403,30 @@ static void value_handler(lv_task_t * task)
         sprintf(temp,"%u",motor_highest_temp);
         lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
         lv_label_set_text(rineheart_temp_label,temp);
+    }
+
+        //START PRECHARGE AND DRIVE PRESSED CHECKS.
+    switch (precharge_pressed)
+    {
+        case 0:
+            lv_obj_set_hidden(prechargeWarningLine,true);
+        break;
+        
+        case 1:
+            draw_precharge_warning();
+        break;
+    }
+
+    switch (drive_pressed)
+    {
+        case 0:
+            lv_obj_set_hidden(driveWarningLine,true);
+        break;
+        
+        case 1:
+            draw_drive_warning();
+        break;
+
     }
 }
 

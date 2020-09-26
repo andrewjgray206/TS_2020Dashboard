@@ -1,11 +1,11 @@
 /**
- * @file screen1.c
+ * @file screen3.c
  *
  */
 
 /**
   ******************************************************************************
-  * @file    screen1.c
+  * @file    screen3.c
   * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
   * @version V1.0
   * @date    02-09-2020
@@ -81,7 +81,7 @@ extern bool drive_pressed;
  * Creates the first window
  * @param th pointer to a theme
  */
-void screen1Init(lv_theme_t * th) //sets the screen up.
+void screen3Init(lv_theme_t * th) //sets the screen up.
 {
     /* This integration of LVGL V6 uses a window view
     * with buttons to navigate between screens. (hopefully)
