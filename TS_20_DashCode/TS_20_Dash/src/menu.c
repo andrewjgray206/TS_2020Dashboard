@@ -30,6 +30,9 @@
  *      EXTERN
  *      VARIABLES
  *********************/
+extern int ams_state;
+extern bool precharge_pressed;
+extern bool drive_pressed;
 extern float max_accum_temp;
 extern uint16_t accum_lowest_voltage;
 extern uint16_t motor_highest_temp;
@@ -50,11 +53,22 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
 
-static void value_handler(lv_task_t * task);
-static void test_iterator(lv_task_t * task);
+static void ams_task_handler(lv_task_t * task);
+static void can_test_iterator(lv_task_t * task);
+
+static void draw_precharge_warning();
+static void draw_drive_warning();
 /**********************
  *  STATIC VARIABLES
  **********************/
+static lv_obj_t * header;
+static lv_obj_t * ams_label;
+static lv_obj_t * driveWarningLine;
+static lv_obj_t * prechargeWarningLine;
+
+static lv_style_t style_line;
+static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
+
 static lv_task_t * value_handle;
 static lv_task_t * iterate;
 
@@ -193,9 +207,22 @@ static void create_tab1(lv_obj_t * parent)
     accum_volt_label = lv_label_create(h2,NULL);
     lv_label_set_text(accum_volt_label,"0");
 
-    value_handle = lv_task_create(value_handler,1000,LV_TASK_PRIO_MID,NULL);
+    //ALARM BOX
+    lv_style_copy(&style_line, &lv_style_plain);
+    style_line.line.color = LV_COLOR_RED;
+    style_line.line.width = 10;
+    style_line.line.rounded = 1;
 
-    iterate = lv_task_create(test_iterator,100,LV_TASK_PRIO_MID,NULL);
+    driveWarningLine = lv_line_create(lv_scr_act(), NULL);
+    lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
+    lv_line_set_points(driveWarningLine, line_points, 5);//Set the points
+
+    prechargeWarningLine = lv_line_create(lv_scr_act(),NULL);
+    lv_obj_set_hidden(prechargeWarningLine,true); //start as hidden.
+    lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
+
+    value_handle = lv_task_create(ams_task_handler,1000,LV_TASK_PRIO_MID,NULL);
+    iterate = lv_task_create(can_test_iterator,100,LV_TASK_PRIO_MID,NULL);
 
 }
 
@@ -274,9 +301,9 @@ static void header_create(void)
     lv_label_set_text(sym, "TS 20");
     lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
 
-    lv_obj_t * ams_state = lv_label_create(header, NULL);
-    lv_label_set_text(ams_state, "AMS STATE: Idle");
-    lv_obj_align(ams_state, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
+    ams_label = lv_label_create(header, NULL);
+    lv_label_set_text(ams_label, "AMS STATE: Idle");
+    lv_obj_align(ams_label, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
 
     lv_obj_t * clock = lv_label_create(header, NULL);
     lv_label_set_text(clock, "RUN TIME: 0");
@@ -287,7 +314,11 @@ static void header_create(void)
 
 }
 
-static void test_iterator(lv_task_t * task)
+static void can_test_iterator(lv_task_t * task)
+/* NOTE: When implementing with real CAN messages
+* This function can be deleted or commented out.
+* As all it does is simulate can messages
+* for simulation testing. */
 {
     rineheart_highest_temp ++;
     accum_lowest_voltage ++;
@@ -301,11 +332,39 @@ static void test_iterator(lv_task_t * task)
         motor_highest_temp = 0;
         max_accum_temp = 0;
     }
+
+    ams_state = ams_state + 1; // for ams state
+    if (ams_state == 8)
+    {
+        ams_state = 0;
+    }
+    switch (precharge_pressed)
+    {
+    case 0:
+        precharge_pressed = 1;
+        break;
+    
+    case 1:
+        precharge_pressed = 0;
+        break;
+    }
+
+    switch (drive_pressed)
+    {
+    case 0:
+        drive_pressed = 1;
+        break;
+    
+    case 1:
+        drive_pressed = 0;
+        break;
+    }    
 }
 
-static void value_handler(lv_task_t * task)
+
+static void ams_task_handler(lv_task_t * task)
 {
-    if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
+     if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
     {
         char temp[10] = "";
         sprintf(temp,"%u",motor_highest_temp);
@@ -337,6 +396,51 @@ static void value_handler(lv_task_t * task)
         sprintf(temp,"%u",motor_highest_temp);
         lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
         lv_label_set_text(rineheart_temp_label,temp);
+    }
+
+    switch(ams_state){ //looks at the AMS_state can signal.
+        case 0:
+            lv_label_set_text(ams_label,"AMS STATE: 0 IDLE");
+        break;
+        case 1:
+            lv_label_set_text(ams_label,"AMS STATE: 1 Precharge Waiting");
+        break;
+        case 2:
+            lv_label_set_text(ams_label,"AMS STATE: 2 Precharging");
+        break;
+        case 3:
+            lv_label_set_text(ams_label,"AMS STATE: 3 Waiting for Drive");
+        break;
+        case 4:
+            lv_label_set_text(ams_label,"AMS STATE: 4 DRIVE");
+        break;
+        case 7:
+            lv_label_set_text(ams_label,"AMS STATE: 7 Error");
+    }
+
+    //START PRECHARGE AND DRIVE PRESSED CHECKS.
+    
+    switch (precharge_pressed)
+    {
+        case 0:
+            lv_obj_set_hidden(prechargeWarningLine,true);
+        break;
+        
+        case 1:
+            draw_precharge_warning();
+        break;
+    }
+    
+    switch (drive_pressed)
+    {
+        case 0:
+            lv_obj_set_hidden(driveWarningLine,true);
+        break;
+        
+        case 1:
+            draw_drive_warning();
+        break;
+
     }
 }
 
@@ -374,6 +478,21 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
     }
+}
+
+static void draw_precharge_warning()
+//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
+{
+    style_line.line.color = LV_COLOR_ORANGE;
+    lv_line_set_style(prechargeWarningLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(prechargeWarningLine,false);
+}
+
+static void draw_drive_warning()
+{
+    style_line.line.color = LV_COLOR_GREEN;
+    lv_line_set_style(driveWarningLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(driveWarningLine,false);
 }
 
 
