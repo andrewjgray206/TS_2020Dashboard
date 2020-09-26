@@ -39,7 +39,6 @@
  *  STATIC PROTOTYPES
  **********************/
 static void header_create();
-static void draw_warning_box();
 static void btn_event(lv_obj_t * obj, lv_event_t event); //btn1 event.
 static void ams_task_handler(lv_task_t * task);
 static void can_test_iterator(lv_task_t * task);
@@ -56,9 +55,8 @@ static lv_task_t * testIterator;
 static lv_obj_t * driveWarningLine;
 static lv_obj_t * prechargeWarningLine;
 
-
 static lv_style_t style_line;
-static lv_point_t line_points[] = {{0,0},{500,0},{500, 300},{0, 300},{0,0}};
+static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
 
 /***********************
  * EXTERNAL VARIABLES 
@@ -289,7 +287,6 @@ static void header_create()
     lv_label_set_text(clock, "RUN TIME: 0");
     lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
 
-        
     //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
     lv_obj_set_pos(header, 0, 0);
 }
