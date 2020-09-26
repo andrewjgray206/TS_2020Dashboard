@@ -3,9 +3,35 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 extern int ams_state;
 extern bool precharge_pressed;
 extern bool drive_pressed;
+extern float max_accum_temp;
+extern uint16_t accum_lowest_voltage;
+extern uint16_t motor_highest_temp;
+extern uint16_t rineheart_highest_temp;
+extern int ams_state;
+extern bool precharge_pressed;
+extern bool drive_pressed;
+
+lv_task_t * task_handler;
+lv_task_t * can_message_iterator;
+
+lv_obj_t * slider_label;
+
+lv_obj_t * motor_bar;
+lv_obj_t * motor_temp_value;
+
+lv_obj_t * rineheart_bar;
+lv_obj_t * rineheart_temp_label;
+
+lv_obj_t * accum_temp;
+lv_obj_t * accum_temp_label;
+
+lv_obj_t * accum_volt;
+lv_obj_t * accum_volt_label;
+
 
 lv_obj_t * driveWarningLine;
 lv_obj_t * prechargeWarningLine;
@@ -72,6 +98,18 @@ void can_test_iterator(lv_task_t * task)
 * As all it does is simulate can messages
 * for simulation testing. */
 {
+    rineheart_highest_temp ++;
+    accum_lowest_voltage ++;
+    motor_highest_temp ++;
+    max_accum_temp ++;
+    
+    if (motor_highest_temp == 200)
+    {
+        rineheart_highest_temp = 0;
+        accum_lowest_voltage = 0;
+        motor_highest_temp = 0;
+        max_accum_temp = 0;
+    }
     ams_state = ams_state + 1; // for ams state
     if (ams_state == 8)
     {
@@ -102,6 +140,39 @@ void can_test_iterator(lv_task_t * task)
 
 void ams_task_handler(lv_task_t * task)
 {
+    if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
+    {
+        char temp[10] = "";
+        sprintf(temp,"%u",motor_highest_temp);
+        lv_bar_set_value(motor_bar,motor_highest_temp,LV_ANIM_ON);
+        lv_label_set_text(motor_temp_value,temp);
+    }
+
+    if (lv_bar_get_value(accum_temp) != max_accum_temp)
+    {
+        int temperature = max_accum_temp; //convert to an int for printing purposes.
+        char temp[] = "";
+        sprintf(temp,"%i",temperature);
+        lv_bar_set_value(accum_temp,max_accum_temp,LV_ANIM_ON);
+        lv_label_set_text(accum_temp_label,temp);
+        printf(temp);
+    }
+
+    if(lv_bar_get_value(accum_volt)!= accum_lowest_voltage)
+    {
+        char temp[] = "";
+        sprintf(temp,"%u",accum_lowest_voltage);
+        lv_bar_set_value(accum_volt,accum_lowest_voltage,LV_ANIM_ON);
+        lv_label_set_text(accum_volt_label,temp);
+    }
+
+    if (lv_bar_get_value(rineheart_bar) != rineheart_highest_temp)
+    {
+        char temp[] = "";
+        sprintf(temp,"%u",motor_highest_temp);
+        lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
+        lv_label_set_text(rineheart_temp_label,temp);
+    }
 
     switch(ams_state){ //looks at the AMS_state can signal.
         case 0:

@@ -43,23 +43,23 @@ extern void header_create();
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_task_t * task_handler;
-static lv_task_t * can_message_iterator;
+extern lv_task_t * task_handler;
+extern lv_task_t * can_message_iterator;
 
-static lv_obj_t * header;
-static lv_obj_t * slider_label;
+extern lv_obj_t * header;
+extern lv_obj_t * slider_label;
 
-static lv_obj_t * motor_bar;
-static lv_obj_t * motor_temp_value;
+extern lv_obj_t * motor_bar;
+extern lv_obj_t * motor_temp_value;
 
-static lv_obj_t * rineheart_bar;
-static lv_obj_t * rineheart_temp_label;
+extern lv_obj_t * rineheart_bar;
+extern lv_obj_t * rineheart_temp_label;
 
-static lv_obj_t * accum_temp;
-static lv_obj_t * accum_temp_label;
+extern lv_obj_t * accum_temp;
+extern lv_obj_t * accum_temp_label;
 
-static lv_obj_t * accum_volt;
-static lv_obj_t * accum_volt_label;
+extern lv_obj_t * accum_volt;
+extern lv_obj_t * accum_volt_label;
 
 /***********************
  * EXTERNAL VARIABLES 

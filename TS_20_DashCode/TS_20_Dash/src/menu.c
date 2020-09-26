@@ -16,6 +16,7 @@
 #include "screen1.h"
 #include "screen2.h"
 #include "screen3.h"
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +38,13 @@ extern float max_accum_temp;
 extern uint16_t accum_lowest_voltage;
 extern uint16_t motor_highest_temp;
 extern uint16_t rineheart_highest_temp;
+
+extern lv_obj_t * driveWarningLine;
+extern lv_obj_t * prechargeWarningLine;
+extern lv_style_t style_line;
+extern lv_point_t line_points[];
+extern lv_obj_t * header;
+extern lv_obj_t * ams_label;
 /**********************
  *      TYPEDEFS
  **********************/
@@ -47,45 +55,37 @@ extern uint16_t rineheart_highest_temp;
 static void create_tab1(lv_obj_t * parent);
 static void create_tab2(lv_obj_t * parent);
 static void create_tab3(lv_obj_t * parent);
-static void header_create(void);
+
 
 static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
 
-static void ams_task_handler(lv_task_t * task);
-static void can_test_iterator(lv_task_t * task);
-
-static void draw_precharge_warning();
-static void draw_drive_warning();
+extern void ams_task_handler(lv_task_t * task);
+extern void can_test_iterator(lv_task_t * task);
+extern void draw_precharge_warning();
+extern void draw_drive_warning();
+extern void header_create();
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t * header;
-static lv_obj_t * ams_label;
-static lv_obj_t * driveWarningLine;
-static lv_obj_t * prechargeWarningLine;
+extern lv_task_t * task_handler;
+extern lv_task_t * can_message_iterator;
 
-static lv_style_t style_line;
-static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
+extern lv_obj_t * header;
+extern lv_obj_t * slider_label;
 
-static lv_task_t * value_handle;
-static lv_task_t * iterate;
+extern lv_obj_t * motor_bar;
+extern lv_obj_t * motor_temp_value;
 
-static lv_obj_t * header;
-static lv_obj_t * slider_label;
+extern lv_obj_t * rineheart_bar;
+extern lv_obj_t * rineheart_temp_label;
 
-static lv_obj_t * motor_bar;
-static lv_obj_t * motor_temp_value;
+extern lv_obj_t * accum_temp;
+extern lv_obj_t * accum_temp_label;
 
-static lv_obj_t * rineheart_bar;
-static lv_obj_t * rineheart_temp_label;
-
-static lv_obj_t * accum_temp;
-static lv_obj_t * accum_temp_label;
-
-static lv_obj_t * accum_volt;
-static lv_obj_t * accum_volt_label;
+extern lv_obj_t * accum_volt;
+extern lv_obj_t * accum_volt_label;
 
 /**********************
  *      MACROS
@@ -151,6 +151,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
     lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 100, 20);
 
+
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
     lv_label_set_text(motorTempLabel,"Motor Temp");
 
@@ -212,16 +213,10 @@ static void create_tab1(lv_obj_t * parent)
     style_line.line.width = 10;
     style_line.line.rounded = 1;
 
-    driveWarningLine = lv_line_create(lv_scr_act(), NULL);
-    lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
-    lv_line_set_points(driveWarningLine, line_points, 5);//Set the points
+    warning_lines();
 
-    prechargeWarningLine = lv_line_create(lv_scr_act(),NULL);
-    lv_obj_set_hidden(prechargeWarningLine,true); //start as hidden.
-    lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
-
-    value_handle = lv_task_create(ams_task_handler,1000,LV_TASK_PRIO_MID,NULL);
-    iterate = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
+    task_handler = lv_task_create(ams_task_handler,1000,LV_TASK_PRIO_MID,NULL);
+    can_message_iterator = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
 
 }
 
@@ -290,30 +285,8 @@ static void create_tab3(lv_obj_t * parent)
 
 }
 
-static void header_create(void)
-{
-    header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
-    lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
-    lv_obj_set_height(header, 30);
 
-    lv_obj_t * sym = lv_label_create(header, NULL);
-    lv_label_set_text(sym, "TS 20");
-    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
-
-    ams_label = lv_label_create(header, NULL);
-    lv_label_set_text(ams_label, "AMS STATE: Idle");
-    lv_obj_align(ams_label, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
-
-    lv_obj_t * clock = lv_label_create(header, NULL);
-    lv_label_set_text(clock, "RUN TIME: 0");
-    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
-        
-    //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
-    lv_obj_set_pos(header, 0, 0);
-
-}
-
-static void can_test_iterator(lv_task_t * task)
+static void can_test_iterator2(lv_task_t * task)
 /* NOTE: When implementing with real CAN messages
 * This function can be deleted or commented out.
 * As all it does is simulate can messages
@@ -361,7 +334,7 @@ static void can_test_iterator(lv_task_t * task)
 }
 
 
-static void ams_task_handler(lv_task_t * task)
+static void ams_task_handler2(lv_task_t * task)
 {
      if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
     {
@@ -448,8 +421,8 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(iterate);
-        lv_task_del(value_handle);
+        lv_task_del(can_message_iterator);
+        lv_task_del(task_handler);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen1Init(lv_theme_night_init(63488, NULL));
     }
@@ -460,8 +433,8 @@ static void navButton2Handler(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(iterate);
-        lv_task_del(value_handle);
+        lv_task_del(can_message_iterator);
+        lv_task_del(task_handler);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen2Init(lv_theme_night_init(63488, NULL));
     }
@@ -472,26 +445,9 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(iterate);
-        lv_task_del(value_handle);
+        lv_task_del(can_message_iterator);
+        lv_task_del(task_handler);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
     }
 }
-
-static void draw_precharge_warning()
-//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
-{
-    style_line.line.color = LV_COLOR_ORANGE;
-    lv_line_set_style(prechargeWarningLine, LV_LINE_STYLE_MAIN, &style_line);
-    lv_obj_set_hidden(prechargeWarningLine,false);
-}
-
-static void draw_drive_warning()
-{
-    style_line.line.color = LV_COLOR_GREEN;
-    lv_line_set_style(driveWarningLine, LV_LINE_STYLE_MAIN, &style_line);
-    lv_obj_set_hidden(driveWarningLine,false);
-}
-
-

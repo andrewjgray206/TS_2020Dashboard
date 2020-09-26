@@ -45,23 +45,23 @@ extern void header_create();
  * AND GLOBAL FOR EASY ACCESS BETWEEN FUNCTIONS.
  **********************/
 
-static lv_task_t * task;
-static lv_task_t * can_message_iterator;
+extern lv_task_t * task_handler;
+extern lv_task_t * can_message_iterator;
 
-static lv_obj_t * header;
-static lv_obj_t * slider_label;
+extern lv_obj_t * header;
+extern lv_obj_t * slider_label;
 
-static lv_obj_t * motor_bar;
-static lv_obj_t * motor_temp_value;
+extern lv_obj_t * motor_bar;
+extern lv_obj_t * motor_temp_value;
 
-static lv_obj_t * rineheart_bar;
-static lv_obj_t * rineheart_temp_label;
+extern lv_obj_t * rineheart_bar;
+extern lv_obj_t * rineheart_temp_label;
 
-static lv_obj_t * accum_temp;
-static lv_obj_t * accum_temp_label;
+extern lv_obj_t * accum_temp;
+extern lv_obj_t * accum_temp_label;
 
-static lv_obj_t * accum_volt;
-static lv_obj_t * accum_volt_label;
+extern lv_obj_t * accum_volt;
+extern lv_obj_t * accum_volt_label;
 
 /***********************
  * EXTERNAL VARIABLES 
@@ -189,9 +189,8 @@ void screen3Init(lv_theme_t * th)
 
     warning_lines();
 
-
     //START TASK CREATION.
-    task = lv_task_create(ams_task_handler,10,LV_TASK_PRIO_LOW,NULL);
+    task_handler = lv_task_create(ams_task_handler,10,LV_TASK_PRIO_LOW,NULL);
     can_message_iterator = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
 }
 
@@ -207,7 +206,7 @@ static void btn_event(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(task);
+        lv_task_del(task_handler);
         lv_task_del(can_message_iterator);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         menuInit(lv_theme_night_init(63488, NULL)); //call to another file to run it's screen.
