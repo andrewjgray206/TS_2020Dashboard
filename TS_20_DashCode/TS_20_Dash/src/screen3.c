@@ -7,7 +7,7 @@
   ******************************************************************************
   * @file    screen1.c
   * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
-  * @version V1.0
+  * @version V1.1
   * @date    02-09-2020
   * @brief   Main Screen #3.
   ******************************************************************************
@@ -180,12 +180,6 @@ void screen3Init(lv_theme_t * th)
 
     accum_volt_label = lv_label_create(h2,NULL);
     lv_label_set_text(accum_volt_label,"0");
-
-    //ALARM BOX
-    lv_style_copy(&style_line, &lv_style_plain);
-    style_line.line.color = LV_COLOR_RED;
-    style_line.line.width = 10;
-    style_line.line.rounded = 1;
 
     warning_lines();
 
