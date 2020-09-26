@@ -3,18 +3,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-
-extern int ams_state;
 extern int heartbeat_counter;
-extern bool precharge_pressed;
-extern bool drive_pressed;
 extern float max_accum_temp;
 extern uint16_t accum_lowest_voltage;
 extern uint16_t motor_highest_temp;
 extern uint16_t rineheart_highest_temp;
 extern int ams_state;
+
 extern bool precharge_pressed;
 extern bool drive_pressed;
+extern bool apps_disagree;
+extern bool trailbraking_active;
 
 lv_task_t * task_handler;
 lv_task_t * can_message_iterator;
@@ -35,6 +34,8 @@ lv_obj_t * accum_volt_label;
 
 lv_obj_t * driveWarningLine;
 lv_obj_t * prechargeWarningLine;
+lv_obj_t * appsDisagreeLine;
+lv_obj_t * trailbrakingLine;
 
 lv_obj_t * header;
 lv_obj_t * ams_label;
@@ -42,10 +43,17 @@ lv_obj_t * runtime;
 
 lv_style_t style_line;
 static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
+static lv_point_t trailbraking_points[] = {{800,0},{800,240}};
+static lv_point_t disagree_points[] = {{800,240},{800,480}};
 
 
 void warning_lines()
 {
+    lv_style_copy(&style_line, &lv_style_plain);
+    style_line.line.color = LV_COLOR_RED;
+    style_line.line.width = 10;
+    style_line.line.rounded = 1;
+
     driveWarningLine = lv_line_create(lv_scr_act(), NULL);
     lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
     lv_line_set_points(driveWarningLine, line_points, 5);//Set the points
@@ -53,6 +61,14 @@ void warning_lines()
     prechargeWarningLine = lv_line_create(lv_scr_act(),NULL);
     lv_obj_set_hidden(prechargeWarningLine,true); //start as hidden.
     lv_line_set_points(prechargeWarningLine, line_points, 5);//Set the points
+
+    appsDisagreeLine = lv_line_create(lv_scr_act(),NULL);
+    lv_obj_set_hidden(appsDisagreeLine,true);
+    lv_line_set_points(appsDisagreeLine,disagree_points,2);
+
+    trailbrakingLine = lv_line_create(lv_scr_act(),NULL);
+    lv_obj_set_hidden(trailbrakingLine,true);
+    lv_line_set_points(trailbrakingLine,trailbraking_points,2);
 }
 
 void draw_precharge_warning()
@@ -68,6 +84,20 @@ void draw_drive_warning()
     style_line.line.color = LV_COLOR_GREEN;
     lv_line_set_style(driveWarningLine, LV_LINE_STYLE_MAIN, &style_line);
     lv_obj_set_hidden(driveWarningLine,false);
+}
+
+void draw_disagree_warning()
+{
+    style_line.line.color = LV_COLOR_RED;
+    lv_line_set_style(appsDisagreeLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(appsDisagreeLine,false);
+}
+
+void draw_trailbrake_warning()
+{
+    style_line.line.color = LV_COLOR_BLUE;
+    lv_line_set_style(trailbrakingLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_obj_set_hidden(trailbrakingLine,false);
 }
 
 void header_create()
@@ -219,7 +249,28 @@ void ams_task_handler(lv_task_t * task)
         case 1:
             draw_drive_warning();
         break;
+    }
 
+    switch (apps_disagree)
+    {
+    case 0:
+        lv_obj_set_hidden(appsDisagreeLine,true);
+        break;
+    
+    case 1:
+        draw_disagree_warning();
+        break;
+    }
+
+    switch (trailbraking_active)
+    {
+    case 0:
+        lv_obj_set_hidden(trailbrakingLine,true);
+        break;
+    
+    case 1:
+        draw_trailbrake_warning();
+        break;
     }
 }
 

@@ -35,6 +35,8 @@ extern "C" {
 void warning_lines();
 void draw_precharge_warning();
 void draw_drive_warning();
+void draw_disagree_warning();
+void draw_trailbrake_warning();
 void can_test_iterator(lv_task_t * task);
 void ams_task_handler(lv_task_t * task);
 
