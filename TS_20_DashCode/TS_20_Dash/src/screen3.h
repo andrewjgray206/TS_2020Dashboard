@@ -3,8 +3,6 @@
  *
  */
 
-#ifndef SCREEN3_H
-#define SCREEN3_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,9 +18,6 @@ extern "C" {
 #include "../../../lvgl/lvgl.h"
 #include "../../../lv_ex_conf.h"
 #endif
-
-#if LV_USE_TESTS
-
 
 /*********************
  *      DEFINES
@@ -45,9 +40,4 @@ void screen3Init(lv_theme_t * th);
 /**********************
  *      MACROS
  **********************/
-
-#endif /*LV_USE_TESTS*/
-
-
-#endif /*LV_TEST_THEME_H*/
 

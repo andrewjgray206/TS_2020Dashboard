@@ -26,7 +26,6 @@
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-
 void screen2Init(lv_theme_t * th);
 
 /**********************
