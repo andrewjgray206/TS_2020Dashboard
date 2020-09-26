@@ -285,7 +285,6 @@ static void create_tab3(lv_obj_t * parent)
 
 }
 
-
 static void can_test_iterator2(lv_task_t * task)
 /* NOTE: When implementing with real CAN messages
 * This function can be deleted or commented out.

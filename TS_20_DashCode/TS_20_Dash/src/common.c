@@ -5,6 +5,7 @@
 
 
 extern int ams_state;
+extern int heartbeat_counter;
 extern bool precharge_pressed;
 extern bool drive_pressed;
 extern float max_accum_temp;
@@ -32,12 +33,12 @@ lv_obj_t * accum_temp_label;
 lv_obj_t * accum_volt;
 lv_obj_t * accum_volt_label;
 
-
 lv_obj_t * driveWarningLine;
 lv_obj_t * prechargeWarningLine;
 
 lv_obj_t * header;
 lv_obj_t * ams_label;
+lv_obj_t * runtime;
 
 lv_style_t style_line;
 static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
@@ -84,11 +85,10 @@ void header_create()
     lv_label_set_text(sym, "TS 20");
     lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
 
-    lv_obj_t * clock = lv_label_create(header, NULL);
-    lv_label_set_text(clock, "RUN TIME: 0");
-    lv_obj_align(clock, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+    runtime = lv_label_create(header, NULL);
+    lv_label_set_text(runtime, "0");
+    lv_obj_align(runtime, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
 
-    //lv_cont_set_fit2(header, LV_FIT_NONE, LV_FIT_TIGHT);   /*Let the height set automatically*/
     lv_obj_set_pos(header, 0, 0);
 }
 
@@ -102,6 +102,7 @@ void can_test_iterator(lv_task_t * task)
     accum_lowest_voltage ++;
     motor_highest_temp ++;
     max_accum_temp ++;
+    heartbeat_counter++;
     
     if (motor_highest_temp == 200)
     {
@@ -140,6 +141,9 @@ void can_test_iterator(lv_task_t * task)
 
 void ams_task_handler(lv_task_t * task)
 {
+    char str[10];
+    sprintf(str,"%d",heartbeat_counter);
+    lv_label_set_text(runtime,str);
     if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
     {
         char temp[10] = "";
