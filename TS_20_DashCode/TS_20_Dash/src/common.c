@@ -51,7 +51,7 @@ void warning_lines()
 {
     lv_style_copy(&style_line, &lv_style_plain);
     style_line.line.color = LV_COLOR_RED;
-    style_line.line.width = 10;
+    style_line.line.width = 30;
     style_line.line.rounded = 1;
 
     driveWarningLine = lv_line_create(lv_scr_act(), NULL);
