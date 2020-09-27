@@ -225,7 +225,7 @@ void ams_task_handler(lv_task_t * task)
     if (lv_bar_get_value(rineheart_bar) != rineheart_highest_temp)
     {
         char temp[] = "";
-        sprintf(temp,"%u",motor_highest_temp);
+        sprintf(temp,"%u",rineheart_highest_temp);
         lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
         lv_label_set_text(rineheart_temp_label,temp);
     }
