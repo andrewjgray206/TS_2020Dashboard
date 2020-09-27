@@ -24,7 +24,6 @@ uint16_t rineheart_highest_temp = 0;
 
 float max_accum_temp = 0;
 
-
 /**
  * A task to measure the elapsed time for LittlevGL
  * @param data unused
@@ -48,6 +47,8 @@ void hw_init(void)
     /* Add a display
      * Use the 'monitor' driver which creates window on PC's monitor to simulate a display*/
     monitor_init();
+
+    
 
     static lv_disp_buf_t disp_buf;
     static lv_color_t buf[LV_HOR_RES_MAX * 10];                     /*Declare a buffer for 10 lines*/

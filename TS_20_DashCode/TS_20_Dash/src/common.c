@@ -100,6 +100,28 @@ void draw_trailbrake_warning()
     lv_obj_set_hidden(trailbrakingLine,false);
 }
 
+void header_tab_create()
+{
+    header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
+    lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
+    lv_obj_set_height(header, 30);
+
+    ams_label = lv_label_create(header, NULL);
+    lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
+    lv_obj_align(ams_label, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
+
+
+    lv_obj_t * sym = lv_label_create(header, NULL);
+    lv_label_set_text(sym, "TS 20");
+    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
+
+    runtime = lv_label_create(header, NULL);
+    lv_label_set_text(runtime, "0");
+    lv_obj_align(runtime, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+
+    lv_obj_set_pos(header, 0, 0);
+}
+
 void header_create()
 {
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);

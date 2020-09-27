@@ -52,6 +52,7 @@ extern lv_obj_t * ams_label;
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+
 static void create_tab1(lv_obj_t * parent);
 static void create_tab2(lv_obj_t * parent);
 static void create_tab3(lv_obj_t * parent);
@@ -122,7 +123,7 @@ void menuInit(lv_theme_t * th)
     create_tab1(tab1);
     create_tab2(tab2);
     create_tab3(tab3);
-    header_create();
+    header_tab_create();
     //END SCREEN CONTENT
 }
 

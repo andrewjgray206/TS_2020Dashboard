@@ -26,6 +26,7 @@ int main(void)
 {
 	lv_init();
 	hw_init();
+  
 
   //I wanna make a splash screen, that function will go here.
   //splashScreen(blah blah);
