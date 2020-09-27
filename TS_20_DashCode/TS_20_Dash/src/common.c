@@ -251,17 +251,6 @@ void ams_task_handler(lv_task_t * task)
     }
 
     //START PRECHARGE AND DRIVE PRESSED CHECKS.
-    switch (precharge_pressed)
-    {
-        case 0:
-            lv_obj_set_hidden(prechargeWarningLine,true);
-        break;
-        
-        case 1:
-            draw_precharge_warning();
-        break;
-    }
-
     switch (drive_pressed)
     {
         case 0:
@@ -270,6 +259,17 @@ void ams_task_handler(lv_task_t * task)
         
         case 1:
             draw_drive_warning();
+        break;
+    }
+
+    switch (precharge_pressed)
+    {
+        case 0:
+            lv_obj_set_hidden(prechargeWarningLine,true);
+        break;
+        
+        case 1:
+            draw_precharge_warning();
         break;
     }
 
