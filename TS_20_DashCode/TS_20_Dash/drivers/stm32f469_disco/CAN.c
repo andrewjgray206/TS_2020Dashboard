@@ -156,6 +156,9 @@ void CAN2_RX0_IRQHandler(void) {
 *   Automatically called by the interrupt redirection procedure.
 */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+  
+  // Toggle onboard LED to show CAN traffic.
+  BSP_LED_Toggle(LED4);
 
   // Get Rx message - We do not need to check if it exists as the interrupt implies that something has arrived.
   HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
@@ -189,16 +192,16 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 			break;
 
     case RMS_TEMPERATURE_SET_2:
-      rineheart_highest_temp = RxData[0] | (RxData[1] << 8);
+      rineheart_highest_temp = (RxData[0] | (RxData[1] << 8)) / 10;
       break;
     
     case RMS_TEMPERATURE_SET_3:
-      motor_highest_temp = RxData[4] | (RxData[5] << 8);
+      motor_highest_temp = (RxData[4] | (RxData[5] << 8)) / 10;
 			break;
     
     case RMS_MOTOR_POSITION_INFO:
       motor_speed = RxData[2] | (RxData[3] << 8);
-      LED_Array_Control(round(((motor_speed - MOTOR_SPEED_MIN) / MOTOR_SPEED_MAX) * 11));
+      LED_Array_Control(round(((motor_speed - MOTOR_SPEED_MIN) / MOTOR_SPEED_MAX) * 11.0f));
 			break;
     
     case DISCHARGE_DATA_ID:

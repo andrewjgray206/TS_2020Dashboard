@@ -62,8 +62,8 @@ extern "C" {
 #define	RINEHEART_TEMP_MAX	80
 #define	MOTOR_TEMP_MIN		0
 #define	MOTOR_TEMP_MAX		80
-#define MOTOR_SPEED_MIN		0
-#define MOTOR_SPEED_MAX		6000
+#define MOTOR_SPEED_MIN		0.0f
+#define MOTOR_SPEED_MAX		6000.0f
 
 
 
