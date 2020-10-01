@@ -161,8 +161,8 @@ void can_test_iterator(lv_task_t * task)
     max_accum_temp ++;
     heartbeat_counter++;
 
-    //trailbraking_active = 1; //testing
-    //apps_disagree = 1; //testing
+    trailbraking_active = 1; //testing
+    apps_disagree = 1; //testing
     
     if (motor_highest_temp == 200)
     {
