@@ -42,9 +42,10 @@ lv_obj_t * ams_label;
 lv_obj_t * runtime;
 
 lv_style_t style_line;
+lv_style_t warning_style;
 static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
-static lv_point_t trailbraking_points[] = {{800,0},{800,240}};
-static lv_point_t disagree_points[] = {{800,240},{800,480}};
+static lv_point_t trailbraking_points[] = {{400,480},{800,480}};
+static lv_point_t disagree_points[] = {{0,480},{400,480}};
 
 
 void warning_lines()
@@ -53,6 +54,11 @@ void warning_lines()
     style_line.line.color = LV_COLOR_RED;
     style_line.line.width = 30;
     style_line.line.rounded = 1;
+
+    lv_style_copy(&warning_style,&lv_style_plain);
+    warning_style.line.color = LV_COLOR_RED;
+    warning_style.line.width = 30;
+    warning_style.line.rounded = 1;
 
     driveWarningLine = lv_line_create(lv_scr_act(), NULL);
     lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
@@ -88,8 +94,7 @@ void draw_drive_warning()
 
 void draw_disagree_warning()
 {
-    style_line.line.color = LV_COLOR_RED;
-    lv_line_set_style(appsDisagreeLine, LV_LINE_STYLE_MAIN, &style_line);
+    lv_line_set_style(appsDisagreeLine, LV_LINE_STYLE_MAIN, &warning_style);
     lv_obj_set_hidden(appsDisagreeLine,false);
 }
 
@@ -155,6 +160,9 @@ void can_test_iterator(lv_task_t * task)
     motor_highest_temp ++;
     max_accum_temp ++;
     heartbeat_counter++;
+
+    //trailbraking_active = 1; //testing
+    //apps_disagree = 1; //testing
     
     if (motor_highest_temp == 200)
     {
@@ -171,7 +179,7 @@ void can_test_iterator(lv_task_t * task)
     switch (precharge_pressed)
     {
     case 0:
-        precharge_pressed = 1;
+        precharge_pressed = 0;
         break;
     
     case 1:
@@ -182,7 +190,7 @@ void can_test_iterator(lv_task_t * task)
     switch (drive_pressed)
     {
     case 0:
-        drive_pressed = 1;
+        drive_pressed = 0;
         break;
     
     case 1:
