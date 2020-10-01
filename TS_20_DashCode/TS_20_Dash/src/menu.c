@@ -66,7 +66,7 @@ extern void ams_task_handler(lv_task_t * task);
 extern void can_test_iterator(lv_task_t * task);
 extern void draw_precharge_warning();
 extern void draw_drive_warning();
-extern void header_create();
+extern void header_tab_create();
 /**********************
  *  STATIC VARIABLES
  **********************/
