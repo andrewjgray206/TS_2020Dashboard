@@ -15,8 +15,9 @@ extern bool drive_pressed;
 extern bool apps_disagree;
 extern bool trailbraking_active;
 
-lv_task_t * task_handler;
-lv_task_t * can_message_iterator;
+lv_task_t * gauge_handler_task;
+lv_task_t * can_iterator_task;
+lv_task_t * can_info_task;
 
 lv_obj_t * slider_label;
 
@@ -151,7 +152,7 @@ void header_create()
     lv_obj_set_pos(header, 0, 0);
 }
 
-void can_test_iterator(lv_task_t * task)
+void can_iterator(lv_task_t * task)
 /* NOTE: When implementing with real CAN messages
 * This function can be deleted or commented out.
 * As all it does is simulate can messages
@@ -201,7 +202,7 @@ void can_test_iterator(lv_task_t * task)
     }    
 }
 
-void ams_task_handler(lv_task_t * task)
+void gauge_handler(lv_task_t * task)
 {
     char str[10];
     sprintf(str,"%d",heartbeat_counter);
@@ -239,8 +240,11 @@ void ams_task_handler(lv_task_t * task)
         lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
         lv_label_set_text(rineheart_temp_label,temp);
     }
+}
 
-    switch(ams_state){ //looks at the AMS_state can signal.
+void can_info_handler(lv_task_t * task)
+{
+        switch(ams_state){ //looks at the AMS_state can signal.
         case 0:
             lv_label_set_text(ams_label,"AMS STATE: 0 IDLE");
         break;
