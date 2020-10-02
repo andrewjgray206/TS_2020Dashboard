@@ -67,6 +67,8 @@ extern void can_info_handler(lv_task_t * task);
 extern void draw_precharge_warning();
 extern void draw_drive_warning();
 extern void header_tab_create();
+
+static void slider_event_cb(lv_obj_t * slider, lv_event_t event);
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -88,6 +90,8 @@ extern lv_obj_t * accum_temp_label;
 
 extern lv_obj_t * accum_volt;
 extern lv_obj_t * accum_volt_label;
+
+extern lv_obj_t * slider_label;
 
 /**********************
  *      MACROS
@@ -166,7 +170,8 @@ static void create_tab1(lv_obj_t * parent)
 
     motor_temp_value = lv_label_create(parent, NULL);
     lv_label_set_text_fmt(motor_temp_value, "%u", lv_bar_get_value(motor_temp_value));
-    lv_obj_set_pos(motor_temp_value, 20, 65);
+    //lv_obj_set_pos(motor_temp_value, 20, 65);
+    lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
     lv_label_set_text(rineheart_label,"Rineheart Temp");
@@ -179,7 +184,8 @@ static void create_tab1(lv_obj_t * parent)
 
     rineheart_temp_label = lv_label_create(parent, NULL);
     lv_label_set_text(rineheart_temp_label, "0");
-    lv_obj_set_pos(rineheart_temp_label, 20, 137);
+    //lv_obj_set_pos(rineheart_temp_label, 20, 137);
+    lv_obj_align(rineheart_temp_label, rineheart_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * accum_label = lv_label_create(h,NULL);
     lv_label_set_text(accum_label,"Accumulator Temp");
@@ -192,14 +198,15 @@ static void create_tab1(lv_obj_t * parent)
 
     accum_temp_label = lv_label_create(parent, NULL);
     lv_label_set_text(accum_temp_label, "0");
-    lv_obj_set_pos(accum_temp_label, 20, 210);
+    //lv_obj_set_pos(accum_temp_label, 20, 210);
+    lv_obj_align(accum_temp_label, accum_temp, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * h2 = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h2, &h_style);
     lv_obj_set_click(h2, false);
     lv_cont_set_fit(h2, LV_FIT_TIGHT);
     lv_cont_set_layout(h2, LV_LAYOUT_COL_M);
-    lv_obj_align(h2, parent, LV_ALIGN_IN_TOP_LEFT, 500, 20);
+    lv_obj_align(h2, parent, LV_ALIGN_IN_TOP_LEFT, 550, 20);
 
     lv_obj_t * accum_vert_label = lv_label_create(h2,NULL);
     lv_label_set_text(accum_vert_label,"Accumulator Voltage");
@@ -210,8 +217,9 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_volt, 80, 260);
 
-    accum_volt_label = lv_label_create(h2,NULL);
+    accum_volt_label = lv_label_create(parent, NULL);
     lv_label_set_text(accum_volt_label,"0");
+    lv_obj_align(accum_volt_label, accum_volt, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     warning_lines();
 
@@ -222,6 +230,43 @@ static void create_tab1(lv_obj_t * parent)
 }
 
 static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
+{
+    //Sets the styling.
+    lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
+    
+    lv_theme_t * th = lv_theme_get_current();
+
+    static lv_style_t h_style;
+    lv_style_copy(&h_style, &lv_style_transp);
+    h_style.body.padding.inner = LV_DPI / 10;
+    h_style.body.padding.left = LV_DPI / 4; 
+    h_style.body.padding.right = LV_DPI / 4;
+    h_style.body.padding.top = LV_DPI / 10;
+    h_style.body.padding.bottom = LV_DPI / 10;
+
+    //creates a container "h". This becomes the parent object for all of our widgets.
+    lv_obj_t * h = lv_cont_create(parent, NULL); 
+    lv_obj_set_style(h, &h_style);
+    lv_obj_set_click(h, false);
+    lv_cont_set_fit(h, LV_FIT_TIGHT);
+    lv_cont_set_layout(h, LV_LAYOUT_COL_M);
+
+    /* Create a slider in the center of the display */
+    lv_obj_t * slider = lv_slider_create(h, NULL);
+    lv_obj_set_width(slider, LV_DPI * 2);
+    //lv_obj_align(slider, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_event_cb(slider, slider_event_cb);
+    lv_slider_set_range(slider, 0, 100);
+    
+    /* Create a label below the slider */
+    slider_label = lv_label_create(h, NULL);
+    lv_label_set_text(slider_label, "0");
+    //lv_obj_set_auto_realign(slider_label, true);
+    lv_obj_align(slider_label, slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+
+}
+
+static void create_tab3(lv_obj_t * parent)
 {
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
@@ -257,32 +302,7 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     lv_obj_set_event_cb(navButton3, navButton3Handler);
     lv_obj_t * navButton3Label = lv_label_create(navButton3,NULL);
     lv_label_set_text(navButton3Label,"To Screen3.c");
-}
 
-static void create_tab3(lv_obj_t * parent)
-{
-    //Sets the styling.
-    lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
-    
-    lv_theme_t * th = lv_theme_get_current();
-
-    static lv_style_t h_style;
-    lv_style_copy(&h_style, &lv_style_transp);
-    h_style.body.padding.inner = LV_DPI / 10;
-    h_style.body.padding.left = LV_DPI / 4; 
-    h_style.body.padding.right = LV_DPI / 4;
-    h_style.body.padding.top = LV_DPI / 10;
-    h_style.body.padding.bottom = LV_DPI / 10;
-
-    //creates a container "h". This becomes the parent object for all of our widgets.
-    lv_obj_t * h = lv_cont_create(parent, NULL); 
-    lv_obj_set_style(h, &h_style);
-    lv_obj_set_click(h, false);
-    lv_cont_set_fit(h, LV_FIT_TIGHT);
-    lv_cont_set_layout(h, LV_LAYOUT_COL_M);
-
-    lv_obj_t * slider1 = lv_slider_create(h,NULL);
-    lv_obj_t * slider2 = lv_slider_create(h,NULL);
 
 }
 
@@ -319,5 +339,14 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
         lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
+    }
+}
+
+static void slider_event_cb(lv_obj_t * slider, lv_event_t event)
+{
+    if(event == LV_EVENT_VALUE_CHANGED) {
+        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+        snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+        lv_label_set_text(slider_label, buf);
     }
 }

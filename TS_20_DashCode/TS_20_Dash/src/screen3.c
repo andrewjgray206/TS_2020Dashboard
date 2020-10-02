@@ -126,7 +126,7 @@ void screen3Init(lv_theme_t * th)
     //START MENU RIBBON BUTTONS
     lv_obj_t * close_btn = lv_win_add_btn(win, LV_SYMBOL_CLOSE);  /*Add close button and use built-in close action*/
     lv_obj_set_event_cb(close_btn, btn_event);
-    lv_win_set_btn_size(win, 30);
+    lv_win_set_btn_size(win, 50);
 
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
     lv_label_set_text(motorTempLabel,"Motor Temp");
