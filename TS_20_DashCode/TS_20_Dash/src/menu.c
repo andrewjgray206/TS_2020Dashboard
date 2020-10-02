@@ -61,16 +61,18 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
 
-extern void ams_task_handler(lv_task_t * task);
-extern void can_test_iterator(lv_task_t * task);
+extern void gauge_handler(lv_task_t * task);
+extern void can_iterator(lv_task_t * task);
+extern void can_info_handler(lv_task_t * task);
 extern void draw_precharge_warning();
 extern void draw_drive_warning();
-extern void header_create();
+extern void header_tab_create();
 /**********************
  *  STATIC VARIABLES
  **********************/
-extern lv_task_t * task_handler;
-extern lv_task_t * can_message_iterator;
+extern lv_task_t * gauge_handler_task;
+extern lv_task_t * can_iterator_task;
+extern lv_task_t * can_info_task;
 
 extern lv_obj_t * header;
 extern lv_obj_t * slider_label;
@@ -210,8 +212,9 @@ static void create_tab1(lv_obj_t * parent)
 
     warning_lines();
 
-    task_handler = lv_task_create(ams_task_handler,1000,LV_TASK_PRIO_MID,NULL);
-    can_message_iterator = lv_task_create(can_test_iterator,1000,LV_TASK_PRIO_MID,NULL);
+    gauge_handler_task = lv_task_create(gauge_handler,1000,LV_TASK_PRIO_MID,NULL);
+    can_iterator_task = lv_task_create(can_iterator,1000,LV_TASK_PRIO_MID,NULL);
+    can_info_task = lv_task_create(can_info_handler,1000,LV_TASK_PRIO_MID,NULL);
 
 }
 
@@ -285,8 +288,8 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(can_message_iterator);
-        lv_task_del(task_handler);
+        lv_task_del(can_iterator_task);
+        lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen1Init(lv_theme_night_init(63488, NULL));
     }
@@ -297,8 +300,8 @@ static void navButton2Handler(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(can_message_iterator);
-        lv_task_del(task_handler);
+        lv_task_del(can_iterator_task);
+        lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen2Init(lv_theme_night_init(63488, NULL));
     }
@@ -309,8 +312,8 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
     if ( event == LV_EVENT_RELEASED)
     {
-        lv_task_del(can_message_iterator);
-        lv_task_del(task_handler);
+        lv_task_del(can_iterator_task);
+        lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
     }
