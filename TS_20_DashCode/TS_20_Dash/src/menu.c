@@ -57,7 +57,6 @@ static void create_tab1(lv_obj_t * parent);
 static void create_tab2(lv_obj_t * parent);
 static void create_tab3(lv_obj_t * parent);
 
-
 static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
@@ -110,7 +109,7 @@ void menuInit(lv_theme_t * th)
 
     lv_obj_t * tv = lv_tabview_create(scr, NULL); //allows us to add tabs in more easily later.
     lv_obj_set_size(tv, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL));
-    lv_obj_set_pos(tv, 0,30);
+    lv_obj_set_pos(tv, 0,50);
     lv_obj_t * tab1 = lv_tabview_add_tab(tv, "Home Screen"); //tab1.
     lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Tab 2");
     lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Tab 3");
@@ -123,6 +122,7 @@ void menuInit(lv_theme_t * th)
     create_tab1(tab1);
     create_tab2(tab2);
     create_tab3(tab3);
+
     header_tab_create();
     //END SCREEN CONTENT
 }

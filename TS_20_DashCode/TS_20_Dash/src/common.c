@@ -46,7 +46,6 @@ static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
 static lv_point_t trailbraking_points[] = {{800,0},{800,240}};
 static lv_point_t disagree_points[] = {{800,240},{800,480}};
 
-
 void warning_lines()
 {
     lv_style_copy(&style_line, &lv_style_plain);
@@ -104,7 +103,7 @@ void header_tab_create()
 {
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
-    lv_obj_set_height(header, 30);
+    lv_obj_set_height(header, 50);
 
     ams_label = lv_label_create(header, NULL);
     lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
@@ -125,8 +124,8 @@ void header_tab_create()
 void header_create()
 {
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
-    lv_obj_set_width(header, lv_disp_get_hor_res(NULL) - 30);
-    lv_obj_set_height(header, 30);
+    lv_obj_set_width(header, lv_disp_get_hor_res(NULL) - 50);
+    lv_obj_set_height(header, 50);
 
     ams_label = lv_label_create(header, NULL);
     lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
