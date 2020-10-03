@@ -96,6 +96,8 @@ static lv_obj_t * torque_slider_label;
 
 static lv_obj_t * ddlist;
 
+uint16_t ddlist_value;
+
 /**********************
  *      MACROS
  **********************/
@@ -292,10 +294,7 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
 
     /*Create a drop down list*/
     ddlist = lv_ddlist_create(h, NULL);
-    lv_ddlist_set_options(ddlist, "Acceleration\n"
-            "Skid Pan\n"
-            "Auto Cross\n"
-            "Endurance");
+    lv_ddlist_set_options(ddlist, "Acceleration\nSkid Pan\nAuto Cross\nEndurance");
 
     lv_ddlist_set_fix_width(ddlist, 150);
     lv_ddlist_set_fix_height(ddlist, 150);
@@ -358,12 +357,35 @@ static void create_tab3(lv_obj_t * parent)
 static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
 {
     lv_obj_t * currentScreen = lv_scr_act(); //gets the screen.
-    if ( event == LV_EVENT_RELEASED)
+    if (event == LV_EVENT_RELEASED)
     {
+        ddlist_value = lv_ddlist_get_selected(ddlist);
+        
         lv_task_del(can_iterator_task);
         lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
-        screen1Init(lv_theme_night_init(63488, NULL));
+
+        switch (ddlist_value)
+        {
+        case 0:
+            screen1Init(lv_theme_night_init(63488, NULL));
+            break;
+        
+        case 1:
+            screen2Init(lv_theme_night_init(63488, NULL));
+            break;
+
+        case 2:
+            screen2Init(lv_theme_night_init(63488, NULL));
+            break;
+
+        case 3:
+            screen3Init(lv_theme_night_init(63488, NULL));
+            break;
+        
+        default:
+            break;
+        }
     }
 }
 

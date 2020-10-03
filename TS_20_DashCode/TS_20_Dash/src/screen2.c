@@ -123,7 +123,7 @@ void screen2Init(lv_theme_t * th)
     lv_win_set_btn_size(win, 50);
 
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
-    lv_label_set_text(motorTempLabel,"Motor Temp (SCREEN 2)");
+    lv_label_set_text(motorTempLabel,"SKID PAN/ AUTO CROSS");
 
     motor_bar = lv_bar_create(h, NULL);
     lv_bar_set_range(motor_bar, 0, 80);
