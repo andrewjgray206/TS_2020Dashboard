@@ -19,8 +19,6 @@ lv_task_t * gauge_handler_task;
 lv_task_t * can_iterator_task;
 lv_task_t * can_info_task;
 
-lv_obj_t * slider_label;
-
 lv_obj_t * motor_bar;
 lv_obj_t * motor_temp_value;
 

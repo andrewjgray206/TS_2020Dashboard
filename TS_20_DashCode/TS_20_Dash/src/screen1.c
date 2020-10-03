@@ -52,7 +52,6 @@ extern lv_task_t * can_iterator_task;
 extern lv_task_t * can_info_task;
 
 extern lv_obj_t * header;
-extern lv_obj_t * slider_label;
 
 extern lv_obj_t * motor_bar;
 extern lv_obj_t * motor_temp_value;

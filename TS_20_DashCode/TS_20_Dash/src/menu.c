@@ -68,7 +68,8 @@ extern void draw_precharge_warning();
 extern void draw_drive_warning();
 extern void header_tab_create();
 
-static void slider_event_cb(lv_obj_t * slider, lv_event_t event);
+static void traction_slider_event(lv_obj_t * slider, lv_event_t event);
+static void torque_slider_event(lv_obj_t * slider, lv_event_t event);
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -77,7 +78,6 @@ extern lv_task_t * can_iterator_task;
 extern lv_task_t * can_info_task;
 
 extern lv_obj_t * header;
-extern lv_obj_t * slider_label;
 
 extern lv_obj_t * motor_bar;
 extern lv_obj_t * motor_temp_value;
@@ -91,7 +91,10 @@ extern lv_obj_t * accum_temp_label;
 extern lv_obj_t * accum_volt;
 extern lv_obj_t * accum_volt_label;
 
-extern lv_obj_t * slider_label;
+static lv_obj_t * traction_slider_label;
+static lv_obj_t * torque_slider_label;
+
+static lv_obj_t * ddlist;
 
 /**********************
  *      MACROS
@@ -251,18 +254,59 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
 
+    lv_obj_t * traction_label = lv_label_create(h, NULL);
+    lv_label_set_text(traction_label, "Traction Control");
+
     /* Create a slider in the center of the display */
-    lv_obj_t * slider = lv_slider_create(h, NULL);
-    lv_obj_set_width(slider, LV_DPI * 2);
+    lv_obj_t * traction_slider = lv_slider_create(h, NULL);
+    lv_obj_set_width(traction_slider, LV_DPI * 2);
     //lv_obj_align(slider, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_set_event_cb(slider, slider_event_cb);
-    lv_slider_set_range(slider, 0, 100);
+    lv_obj_set_event_cb(traction_slider, traction_slider_event);
+    lv_slider_set_range(traction_slider, 0, 100);
     
     /* Create a label below the slider */
-    slider_label = lv_label_create(h, NULL);
-    lv_label_set_text(slider_label, "0");
-    //lv_obj_set_auto_realign(slider_label, true);
-    lv_obj_align(slider_label, slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+    traction_slider_label = lv_label_create(h, NULL);
+    lv_label_set_text(traction_slider_label, "0");
+    lv_obj_set_auto_realign(traction_slider_label, true);
+    lv_obj_align(traction_slider_label, traction_slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+
+    lv_obj_t * torque_label = lv_label_create(h, NULL);
+    lv_label_set_text(torque_label, "Torque Vectoring");
+
+    /* Create a slider in the center of the display */
+    lv_obj_t * torque_slider = lv_slider_create(h, NULL);
+    lv_obj_set_width(torque_slider, LV_DPI * 2);
+    //lv_obj_align(slider, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_event_cb(torque_slider, torque_slider_event);
+    lv_slider_set_range(torque_slider, 0, 100);
+    
+    /* Create a label below the slider */
+    torque_slider_label = lv_label_create(h, NULL);
+    lv_label_set_text(torque_slider_label, "0");
+    lv_obj_set_auto_realign(torque_slider_label, true);
+    lv_obj_align(torque_slider_label, torque_slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+
+    lv_obj_t * ddlist_label = lv_label_create(h, NULL);
+    lv_label_set_text(ddlist_label, "Select Event");
+    lv_obj_align(ddlist_label, ddlist, LV_ALIGN_OUT_TOP_MID, 0, 0);
+
+    /*Create a drop down list*/
+    ddlist = lv_ddlist_create(h, NULL);
+    lv_ddlist_set_options(ddlist, "Acceleration\n"
+            "Skid Pan\n"
+            "Auto Cross\n"
+            "Endurance");
+
+    lv_ddlist_set_fix_width(ddlist, 150);
+    lv_ddlist_set_fix_height(ddlist, 150);
+    lv_ddlist_set_draw_arrow(ddlist, true);
+
+    /* Enable auto-realign when the size changes.
+     * It will keep the bottom of the ddlist fixed*/
+    lv_obj_set_auto_realign(ddlist, true);
+
+    /*It will be called automatically when the size changes*/
+    lv_obj_align(ddlist, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -0);
 
 }
 
@@ -342,11 +386,21 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
     }
 }
 
-static void slider_event_cb(lv_obj_t * slider, lv_event_t event)
+static void traction_slider_event(lv_obj_t * slider, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) {
         static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
         snprintf(buf, 4, "%u", lv_slider_get_value(slider));
-        lv_label_set_text(slider_label, buf);
+        lv_label_set_text(traction_slider_label, buf);
     }
 }
+
+static void torque_slider_event(lv_obj_t * slider, lv_event_t event)
+{
+    if(event == LV_EVENT_VALUE_CHANGED) {
+        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+        snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+        lv_label_set_text(torque_slider_label, buf);
+    }
+}
+
