@@ -135,7 +135,7 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_obj_set_click(h, false);
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
-    lv_obj_align(h, win, LV_ALIGN_IN_TOP_LEFT, 100, 20);
+    lv_obj_align(h, win, LV_ALIGN_IN_TOP_LEFT, 200, 100);
     
     //START MENU RIBBON BUTTONS
     lv_obj_t * close_btn = lv_win_add_btn(win, LV_SYMBOL_CLOSE);  /*Add close button and use built-in close action*/
@@ -143,7 +143,7 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_win_set_btn_size(win, 50);
 
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
-    lv_label_set_text(motorTempLabel,"Motor Temp");
+    lv_label_set_text(motorTempLabel,"Motor Temp (SCREEN 1)");
 
     motor_bar = lv_bar_create(h, NULL);
     lv_bar_set_range(motor_bar, 0, 80);
@@ -183,7 +183,7 @@ void screen1Init(lv_theme_t * th) //sets the screen up.
     lv_obj_set_click(h2, false);
     lv_cont_set_fit(h2, LV_FIT_TIGHT);
     lv_cont_set_layout(h2, LV_LAYOUT_COL_M);
-    lv_obj_align(h2, win, LV_ALIGN_IN_TOP_LEFT, 320, 20);
+    lv_obj_align(h2, win, LV_ALIGN_IN_TOP_LEFT, 550, 100);
 
     lv_obj_t * accum_vert_label = lv_label_create(h2,NULL);
     lv_label_set_text(accum_vert_label,"Accumulator Voltage");

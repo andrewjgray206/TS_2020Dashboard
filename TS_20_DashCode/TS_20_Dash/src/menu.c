@@ -308,6 +308,11 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     /*It will be called automatically when the size changes*/
     lv_obj_align(ddlist, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -0);
 
+    lv_obj_t * navButton1 = lv_btn_create(h,NULL);
+    lv_obj_set_event_cb(navButton1, navButton1Handler);
+    lv_obj_t * navButton1Label = lv_label_create(navButton1,NULL);
+    lv_label_set_text(navButton1Label,"DRIVE");
+
 }
 
 static void create_tab3(lv_obj_t * parent)
