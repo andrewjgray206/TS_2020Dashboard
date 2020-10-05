@@ -174,8 +174,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_size(motor_bar, 300, 60);
 
     motor_temp_value = lv_label_create(parent, NULL);
-    lv_label_set_text_fmt(motor_temp_value, "%u", lv_bar_get_value(motor_temp_value));
-    //lv_obj_set_pos(motor_temp_value, 20, 65);
+    lv_label_set_text(motor_temp_value, "0");
     lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
