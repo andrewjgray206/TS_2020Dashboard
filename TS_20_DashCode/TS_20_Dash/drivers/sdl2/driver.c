@@ -6,6 +6,23 @@
 #include "indev/mousewheel.h"
 #include "indev/keyboard.h"
 
+// Program Variables
+bool precharge_pressed = 0;
+bool drive_pressed = 1; //this is so that we can see the alerts alternating.
+bool apps_disagree = 0;
+bool trailbraking_active = 0;
+
+int ams_state = 0;
+int heartbeat_counter = 0;
+
+int16_t	motor_speed = 0;
+int16_t heartbeat_state = 0;
+
+uint16_t accum_lowest_voltage = 0;
+uint16_t motor_highest_temp = 0;
+uint16_t rineheart_highest_temp = 0;
+
+float max_accum_temp = 0;
 
 /**
  * A task to measure the elapsed time for LittlevGL
@@ -30,6 +47,8 @@ void hw_init(void)
     /* Add a display
      * Use the 'monitor' driver which creates window on PC's monitor to simulate a display*/
     monitor_init();
+
+    
 
     static lv_disp_buf_t disp_buf;
     static lv_color_t buf[LV_HOR_RES_MAX * 10];                     /*Declare a buffer for 10 lines*/
@@ -60,6 +79,7 @@ void hw_init(void)
 
 void hw_loop(void)
 {
+
     while(1) {
         SDL_Delay(5);
         lv_task_handler();
