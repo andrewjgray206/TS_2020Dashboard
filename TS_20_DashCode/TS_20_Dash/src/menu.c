@@ -96,6 +96,9 @@ static lv_obj_t * torque_slider_label;
 
 static lv_obj_t * ddlist;
 
+static lv_theme_t * th;
+static lv_style_t h_style;
+
 uint16_t ddlist_value;
 
 /**********************
@@ -112,6 +115,17 @@ uint16_t ddlist_value;
  */
 void menuInit(lv_theme_t * th)
 {   
+
+    lv_style_copy(&h_style, &lv_style_transp);
+    h_style.body.padding.inner = LV_DPI / 10;
+    h_style.body.padding.left = LV_DPI / 4; 
+    h_style.body.padding.right = LV_DPI / 4;
+    h_style.body.padding.top = LV_DPI / 10;
+    h_style.body.padding.bottom = LV_DPI / 10;
+    h_style.text.font = &lv_font_roboto_22;
+    h_style.text.color = LV_COLOR_WHITE;
+    
+
     //BEGIN SCREEN SETUP
     lv_theme_set_current(th);
     th = lv_theme_get_current();    
@@ -145,15 +159,7 @@ void menuInit(lv_theme_t * th)
 static void create_tab1(lv_obj_t * parent)
 {
     //Sets the styling.    
-    lv_theme_t * th = lv_theme_get_current();
-
-    static lv_style_t h_style;
-    lv_style_copy(&h_style, &lv_style_transp);
-    h_style.body.padding.inner = LV_DPI / 10;
-    h_style.body.padding.left = LV_DPI / 4; 
-    h_style.body.padding.right = LV_DPI / 4;
-    h_style.body.padding.top = LV_DPI / 10;
-    h_style.body.padding.bottom = LV_DPI / 10;
+    
 
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
@@ -165,7 +171,8 @@ static void create_tab1(lv_obj_t * parent)
 
 
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
-    lv_label_set_text(motorTempLabel,"Motor Temp");
+    lv_label_set_text(motorTempLabel,"MOTOR TEMP");
+    lv_obj_set_style(motorTempLabel, &h_style);
 
     motor_bar = lv_bar_create(h, NULL);
     lv_bar_set_range(motor_bar, 0, 80);
@@ -174,11 +181,12 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_size(motor_bar, 300, 60);
 
     motor_temp_value = lv_label_create(parent, NULL);
-    lv_label_set_text(motor_temp_value, "0");
+    lv_label_set_text(motor_temp_value, "0 C");
     lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
-    lv_label_set_text(rineheart_label,"Rineheart Temp");
+    lv_label_set_text(rineheart_label,"RINEHEART TEMP");
+    lv_obj_set_style(rineheart_label, &h_style);
 
     rineheart_bar = lv_bar_create(h, NULL);
     lv_bar_set_range(rineheart_bar, 0, 80);
@@ -187,12 +195,13 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_size(rineheart_bar, 300, 60);
 
     rineheart_temp_label = lv_label_create(parent, NULL);
-    lv_label_set_text(rineheart_temp_label, "0");
+    lv_label_set_text(rineheart_temp_label, "0C");
     //lv_obj_set_pos(rineheart_temp_label, 20, 137);
     lv_obj_align(rineheart_temp_label, rineheart_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * accum_label = lv_label_create(h,NULL);
-    lv_label_set_text(accum_label,"Accumulator Temp");
+    lv_label_set_text(accum_label,"ACCUMULATOR TEMP");
+    lv_obj_set_style(accum_label, &h_style);
 
     accum_temp = lv_bar_create(h,NULL);
     lv_bar_set_range(accum_temp, 0, 80);
@@ -201,7 +210,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_size(accum_temp, 300, 60);
 
     accum_temp_label = lv_label_create(parent, NULL);
-    lv_label_set_text(accum_temp_label, "0");
+    lv_label_set_text(accum_temp_label, "0C");
     //lv_obj_set_pos(accum_temp_label, 20, 210);
     lv_obj_align(accum_temp_label, accum_temp, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
@@ -213,7 +222,8 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_align(h2, parent, LV_ALIGN_IN_TOP_LEFT, 550, 20);
 
     lv_obj_t * accum_vert_label = lv_label_create(h2,NULL);
-    lv_label_set_text(accum_vert_label,"Accumulator Voltage");
+    lv_label_set_text(accum_vert_label,"ACCUMULATOR VOLTS");
+    lv_obj_set_style(accum_vert_label, &h_style);
 
     accum_volt = lv_bar_create(h2,NULL);
     lv_bar_set_range(accum_volt, 0, 600);
@@ -222,7 +232,7 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_size(accum_volt, 80, 260);
 
     accum_volt_label = lv_label_create(parent, NULL);
-    lv_label_set_text(accum_volt_label,"0");
+    lv_label_set_text(accum_volt_label,"0V");
     lv_obj_align(accum_volt_label, accum_volt, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     warning_lines();
@@ -237,16 +247,6 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
 {
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
-    
-    lv_theme_t * th = lv_theme_get_current();
-
-    static lv_style_t h_style;
-    lv_style_copy(&h_style, &lv_style_transp);
-    h_style.body.padding.inner = LV_DPI / 10;
-    h_style.body.padding.left = LV_DPI / 4; 
-    h_style.body.padding.right = LV_DPI / 4;
-    h_style.body.padding.top = LV_DPI / 10;
-    h_style.body.padding.bottom = LV_DPI / 10;
 
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
@@ -254,9 +254,11 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     lv_obj_set_click(h, false);
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
+    lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
     lv_obj_t * traction_label = lv_label_create(h, NULL);
-    lv_label_set_text(traction_label, "Traction Control");
+    lv_label_set_text(traction_label, "TRACTION CONTROL");
+    lv_obj_set_style(traction_label, &h_style);
 
     /* Create a slider in the center of the display */
     lv_obj_t * traction_slider = lv_slider_create(h, NULL);
@@ -267,12 +269,13 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     
     /* Create a label below the slider */
     traction_slider_label = lv_label_create(h, NULL);
-    lv_label_set_text(traction_slider_label, "0");
+    lv_label_set_text(traction_slider_label, "0%");
     lv_obj_set_auto_realign(traction_slider_label, true);
     lv_obj_align(traction_slider_label, traction_slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
 
     lv_obj_t * torque_label = lv_label_create(h, NULL);
-    lv_label_set_text(torque_label, "Torque Vectoring");
+    lv_label_set_text(torque_label, "TORQUE VECTORING");
+    lv_obj_set_style(torque_label, &h_style);
 
     /* Create a slider in the center of the display */
     lv_obj_t * torque_slider = lv_slider_create(h, NULL);
@@ -283,13 +286,14 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     
     /* Create a label below the slider */
     torque_slider_label = lv_label_create(h, NULL);
-    lv_label_set_text(torque_slider_label, "0");
+    lv_label_set_text(torque_slider_label, "0%");
     lv_obj_set_auto_realign(torque_slider_label, true);
     lv_obj_align(torque_slider_label, torque_slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
 
     lv_obj_t * ddlist_label = lv_label_create(h, NULL);
-    lv_label_set_text(ddlist_label, "Select Event");
+    lv_label_set_text(ddlist_label, "EVENT SELECT");
     lv_obj_align(ddlist_label, ddlist, LV_ALIGN_OUT_TOP_MID, 0, 0);
+    lv_obj_set_style(ddlist_label, &h_style);
 
     /*Create a drop down list*/
     ddlist = lv_ddlist_create(h, NULL);
@@ -318,22 +322,13 @@ static void create_tab3(lv_obj_t * parent)
     //Sets the styling.
     lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
     
-    lv_theme_t * th = lv_theme_get_current();
-
-    static lv_style_t h_style;
-    lv_style_copy(&h_style, &lv_style_transp);
-    h_style.body.padding.inner = LV_DPI / 10;
-    h_style.body.padding.left = LV_DPI / 4; 
-    h_style.body.padding.right = LV_DPI / 4;
-    h_style.body.padding.top = LV_DPI / 10;
-    h_style.body.padding.bottom = LV_DPI / 10;
-
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h, &h_style);
     lv_obj_set_click(h, false);
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
+    lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
     lv_obj_t * navButton1 = lv_btn_create(h,NULL);
     lv_obj_set_event_cb(navButton1, navButton1Handler);
@@ -416,7 +411,7 @@ static void traction_slider_event(lv_obj_t * slider, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) {
         static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+        snprintf(buf, 4, "%u%%", lv_slider_get_value(slider));
         lv_label_set_text(traction_slider_label, buf);
     }
 }
@@ -425,7 +420,7 @@ static void torque_slider_event(lv_obj_t * slider, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) {
         static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+        snprintf(buf, 4, "%u%%", lv_slider_get_value(slider));
         lv_label_set_text(torque_slider_label, buf);
     }
 }

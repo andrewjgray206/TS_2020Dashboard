@@ -207,7 +207,7 @@ void gauge_handler(lv_task_t * task)
     if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
     {
         char temp[10] = "";
-        sprintf(temp,"%u",motor_highest_temp);
+        sprintf(temp,"%uC",motor_highest_temp);
         lv_bar_set_value(motor_bar,motor_highest_temp,LV_ANIM_ON);
         lv_label_set_text(motor_temp_value,temp);
     }
@@ -216,7 +216,7 @@ void gauge_handler(lv_task_t * task)
     {
         int temperature = max_accum_temp; //convert to an int for printing purposes.
         char temp[] = "";
-        sprintf(temp,"%i",temperature);
+        sprintf(temp,"%iC",temperature);
         lv_bar_set_value(accum_temp,max_accum_temp,LV_ANIM_ON);
         lv_label_set_text(accum_temp_label,temp);
         printf(temp);
@@ -225,7 +225,7 @@ void gauge_handler(lv_task_t * task)
     if(lv_bar_get_value(accum_volt)!= accum_lowest_voltage)
     {
         char temp[] = "";
-        sprintf(temp,"%u",accum_lowest_voltage);
+        sprintf(temp,"%uV",accum_lowest_voltage);
         lv_bar_set_value(accum_volt,accum_lowest_voltage,LV_ANIM_ON);
         lv_label_set_text(accum_volt_label,temp);
     }
@@ -233,7 +233,7 @@ void gauge_handler(lv_task_t * task)
     if (lv_bar_get_value(rineheart_bar) != rineheart_highest_temp)
     {
         char temp[] = "";
-        sprintf(temp,"%u",rineheart_highest_temp);
+        sprintf(temp,"%uC",rineheart_highest_temp);
         lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
         lv_label_set_text(rineheart_temp_label,temp);
     }
