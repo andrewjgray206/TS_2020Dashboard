@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    menu.c
   * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
-  * @version V1.1
-  * @date    02-09-2020
+  * @version V1.2
+  * @date    14-10-2020
   * @brief   Menu screens, intitial screen on startup with important information
   * regarding hardware status.
   ******************************************************************************
@@ -69,12 +69,16 @@ extern void draw_drive_warning();
 extern void header_tab_create();
 
 static void traction_slider_event(lv_obj_t * slider, lv_event_t event);
+<<<<<<< HEAD
 static void torque_slider_event(lv_obj_t * slider, lv_event_t event);
 
 static void motor_bar_colour(lv_task_t * motor_bar_colour_task);
 static void rine_bar_colour(lv_task_t * rine_bar_colour_task);
 static void accum_t_bar_colour(lv_task_t * accum_t_bar_colour_task);
 static void accum_v_bar_colour(lv_task_t * accum_v_bar_colour_task);
+=======
+static void torque_switch_event(lv_obj_t * slider, lv_event_t event);
+>>>>>>> 52a01a21006539530dfea37960ea8a772f2cb268
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -101,8 +105,8 @@ extern lv_obj_t * accum_temp_label;
 extern lv_obj_t * accum_volt;
 extern lv_obj_t * accum_volt_label;
 
-static lv_obj_t * traction_slider_label;
-static lv_obj_t * torque_slider_label;
+static lv_obj_t * traction_switch_label;
+static lv_obj_t * torque_switch_label;
 
 static lv_obj_t * ddlist;
 
@@ -141,7 +145,6 @@ void menuInit(lv_theme_t * th)
     h_style.text.font = &lv_font_roboto_22;
     h_style.text.color = LV_COLOR_WHITE;
     
-
     //BEGIN SCREEN SETUP
     lv_theme_set_current(th);
     th = lv_theme_get_current();    
@@ -174,8 +177,11 @@ void menuInit(lv_theme_t * th)
 
 static void create_tab1(lv_obj_t * parent)
 {
+<<<<<<< HEAD
    
     
+=======
+>>>>>>> 52a01a21006539530dfea37960ea8a772f2cb268
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h, &h_style);
@@ -295,34 +301,16 @@ static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
     lv_obj_set_style(traction_label, &h_style);
 
     /* Create a slider in the center of the display */
-    lv_obj_t * traction_slider = lv_slider_create(h, NULL);
-    lv_obj_set_width(traction_slider, LV_DPI * 2);
-    //lv_obj_align(slider, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_set_event_cb(traction_slider, traction_slider_event);
-    lv_slider_set_range(traction_slider, 0, 100);
-    
-    /* Create a label below the slider */
-    traction_slider_label = lv_label_create(h, NULL);
-    lv_label_set_text(traction_slider_label, "0%");
-    lv_obj_set_auto_realign(traction_slider_label, true);
-    lv_obj_align(traction_slider_label, traction_slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+    lv_obj_t * traction_switch = lv_sw_create(h, NULL);
+    lv_obj_set_width(traction_switch, LV_DPI * 1.2);
 
     lv_obj_t * torque_label = lv_label_create(h, NULL);
     lv_label_set_text(torque_label, "TORQUE VECTORING");
     lv_obj_set_style(torque_label, &h_style);
 
     /* Create a slider in the center of the display */
-    lv_obj_t * torque_slider = lv_slider_create(h, NULL);
-    lv_obj_set_width(torque_slider, LV_DPI * 2);
-    //lv_obj_align(slider, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_set_event_cb(torque_slider, torque_slider_event);
-    lv_slider_set_range(torque_slider, 0, 100);
-    
-    /* Create a label below the slider */
-    torque_slider_label = lv_label_create(h, NULL);
-    lv_label_set_text(torque_slider_label, "0%");
-    lv_obj_set_auto_realign(torque_slider_label, true);
-    lv_obj_align(torque_slider_label, torque_slider, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+    lv_obj_t * torque_switch = lv_sw_create(h, NULL);
+    lv_obj_set_width(torque_switch, LV_DPI * 1.2);
 
     lv_obj_t * ddlist_label = lv_label_create(h, NULL);
     lv_label_set_text(ddlist_label, "EVENT SELECT");
@@ -439,6 +427,7 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
     }
+<<<<<<< HEAD
 }
 
 static void traction_slider_event(lv_obj_t * slider, lv_event_t event)
@@ -533,4 +522,6 @@ static void accum_v_bar_colour(lv_task_t * t)
         accum_v_colour.body.main_color = LV_COLOR_RED;
         accum_v_colour.body.grad_color = LV_COLOR_RED;
     }
+=======
+>>>>>>> 52a01a21006539530dfea37960ea8a772f2cb268
 }
