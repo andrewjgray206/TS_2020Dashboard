@@ -208,7 +208,7 @@ static void create_tab1(lv_obj_t * parent)
     rineheart_bar = lv_bar_create(h, NULL);
     lv_style_copy(&rine_colour, lv_bar_get_style(rineheart_bar, LV_BAR_STYLE_INDIC));
 
-    lv_bar_set_range(rineheart_bar, 0, 80);
+    lv_bar_set_range(rineheart_bar, 0, 80); //max val 80
     lv_bar_set_anim_time(rineheart_bar, 500);
     lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(rineheart_bar, 300, 60);
@@ -420,78 +420,145 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
     }
 }
 
+/*
+* NOTE: THE FOLLOWING BAR
+* COLOURS USE HARD CODED MAX VALUES
+* TO FIND THE PERCENTAGE
+* THESE (as well as the bar values)
+* themselves, need to be changed
+* if these values change. */
+
+
 static void motor_bar_colour(lv_task_t * t)
 {
-    if (lv_bar_get_value(motor_bar) < 5)
+    float percentage = lv_bar_get_value(motor_bar);
+    percentage = percentage/80;
+    percentage = percentage*100;
+    printf("Percentage = %f",percentage);
+
+    if (percentage > 90)
     {
-        motor_colour.body.main_color = LV_COLOR_GREEN;
-        motor_colour.body.grad_color = LV_COLOR_GREEN;
+        motor_colour.body.main_color = LV_COLOR_RED;
+        motor_colour.body.grad_color = LV_COLOR_RED;
     }
-    if (lv_bar_get_value(motor_bar) > 5 && lv_bar_get_value(motor_bar) < 10)
+    else if (percentage > 80)
     {
         motor_colour.body.main_color = LV_COLOR_ORANGE;
         motor_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    if (lv_bar_get_value(motor_bar) > 10)
+    else if (percentage > 60)
     {
-        motor_colour.body.main_color = LV_COLOR_RED;
-        motor_colour.body.grad_color = LV_COLOR_RED;
+        motor_colour.body.main_color = LV_COLOR_YELLOW;
+        motor_colour.body.grad_color = LV_COLOR_YELLOW;
+    }
+    else if (percentage > 20)
+    {
+        motor_colour.body.main_color = LV_COLOR_GREEN;
+        motor_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    else if (percentage < 20)
+    {
+        motor_colour.body.main_color = LV_COLOR_BLUE;
+        motor_colour.body.grad_color = LV_COLOR_BLUE;
     }
 }
 
 static void rine_bar_colour(lv_task_t * t)
 {
-    if (lv_bar_get_value(rineheart_bar) < 5)
+    float percentage = lv_bar_get_value(rineheart_bar);
+    percentage = percentage/80;
+    percentage = percentage*100;
+    printf("Percentage = %f",percentage);
+
+    if (percentage > 90)
     {
-        rine_colour.body.main_color = LV_COLOR_GREEN;
-        rine_colour.body.grad_color = LV_COLOR_GREEN;
+        rine_colour.body.main_color = LV_COLOR_RED;
+        rine_colour.body.grad_color = LV_COLOR_RED;
     }
-    if (lv_bar_get_value(rineheart_bar) > 5 && lv_bar_get_value(rineheart_bar) < 10)
+    else if (percentage > 80)
     {
         rine_colour.body.main_color = LV_COLOR_ORANGE;
         rine_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    if (lv_bar_get_value(rineheart_bar) > 10)
+    else if (percentage > 60)
     {
-        rine_colour.body.main_color = LV_COLOR_RED;
-        rine_colour.body.grad_color = LV_COLOR_RED;
+        rine_colour.body.main_color = LV_COLOR_YELLOW;
+        rine_colour.body.grad_color = LV_COLOR_YELLOW;
+    }
+    else if (percentage > 20)
+    {
+        rine_colour.body.main_color = LV_COLOR_GREEN;
+        rine_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    else if (percentage < 20)
+    {
+        rine_colour.body.main_color = LV_COLOR_BLUE;
+        rine_colour.body.grad_color = LV_COLOR_BLUE;
     }
 }
 
 static void accum_t_bar_colour(lv_task_t * t)
 {
-    if (lv_bar_get_value(accum_temp) < 5)
+    float percentage = lv_bar_get_value(accum_temp);
+    percentage = percentage/80;
+    percentage = percentage*100;
+    printf("Percentage = %f",percentage);
+
+    if (percentage > 90)
     {
-        accum_t_colour.body.main_color = LV_COLOR_GREEN;
-        accum_t_colour.body.grad_color = LV_COLOR_GREEN;
+        accum_t_colour.body.main_color = LV_COLOR_RED;
+        accum_t_colour.body.grad_color = LV_COLOR_RED;
     }
-    if (lv_bar_get_value(accum_temp) > 5 && lv_bar_get_value(accum_temp) < 10)
+    else if (percentage > 80)
     {
         accum_t_colour.body.main_color = LV_COLOR_ORANGE;
         accum_t_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    if (lv_bar_get_value(accum_temp) > 10)
+    else if (percentage > 60)
     {
-        accum_t_colour.body.main_color = LV_COLOR_RED;
-        accum_t_colour.body.grad_color = LV_COLOR_RED;
+        accum_t_colour.body.main_color = LV_COLOR_YELLOW;
+        accum_t_colour.body.grad_color = LV_COLOR_YELLOW;
+    }
+    else if (percentage > 20)
+    {
+        accum_t_colour.body.main_color = LV_COLOR_GREEN;
+        accum_t_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    else if (percentage < 20)
+    {
+        accum_t_colour.body.main_color = LV_COLOR_BLUE;
+        accum_t_colour.body.grad_color = LV_COLOR_BLUE;
     }
 }
 
 static void accum_v_bar_colour(lv_task_t * t)
 {
-    if (lv_bar_get_value(accum_volt) < 5)
+    float percentage = lv_bar_get_value(accum_volt);
+    percentage = percentage/600;
+    percentage = percentage*100;
+    if (percentage > 90)
     {
-        accum_v_colour.body.main_color = LV_COLOR_GREEN;
-        accum_v_colour.body.grad_color = LV_COLOR_GREEN;
+        accum_v_colour.body.main_color = LV_COLOR_RED;
+        accum_v_colour.body.grad_color = LV_COLOR_RED;
     }
-    if (lv_bar_get_value(accum_volt) > 5 && lv_bar_get_value(accum_volt) < 10)
+    else if (percentage > 80)
     {
         accum_v_colour.body.main_color = LV_COLOR_ORANGE;
         accum_v_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    if (lv_bar_get_value(accum_volt) > 10)
+    else if (percentage > 60)
     {
-        accum_v_colour.body.main_color = LV_COLOR_RED;
-        accum_v_colour.body.grad_color = LV_COLOR_RED;
+        accum_v_colour.body.main_color = LV_COLOR_YELLOW;
+        accum_v_colour.body.grad_color = LV_COLOR_YELLOW;
+    }
+    else if (percentage > 20)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_GREEN;
+        accum_v_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    else if (percentage < 20)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_BLUE;
+        accum_v_colour.body.grad_color = LV_COLOR_BLUE;
     }
 }
