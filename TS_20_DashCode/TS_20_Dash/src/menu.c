@@ -70,12 +70,22 @@ extern void header_tab_create();
 
 static void traction_slider_event(lv_obj_t * slider, lv_event_t event);
 static void torque_slider_event(lv_obj_t * slider, lv_event_t event);
+
+static void motor_bar_colour(lv_task_t * motor_bar_colour_task);
+static void rine_bar_colour(lv_task_t * rine_bar_colour_task);
+static void accum_t_bar_colour(lv_task_t * accum_t_bar_colour_task);
+static void accum_v_bar_colour(lv_task_t * accum_v_bar_colour_task);
 /**********************
  *  STATIC VARIABLES
  **********************/
 extern lv_task_t * gauge_handler_task;
 extern lv_task_t * can_iterator_task;
 extern lv_task_t * can_info_task;
+
+static lv_task_t * motor_bar_colour_task;
+static lv_task_t * rine_bar_colour_task;
+static lv_task_t * accum_t_bar_colour_task;
+static lv_task_t * accum_v_bar_colour_task;
 
 extern lv_obj_t * header;
 
@@ -97,7 +107,13 @@ static lv_obj_t * torque_slider_label;
 static lv_obj_t * ddlist;
 
 static lv_theme_t * th;
+
 static lv_style_t h_style;
+
+static lv_style_t motor_colour;
+static lv_style_t rine_colour;
+static lv_style_t accum_t_colour;
+static lv_style_t accum_v_colour;
 
 uint16_t ddlist_value;
 
@@ -158,9 +174,8 @@ void menuInit(lv_theme_t * th)
 
 static void create_tab1(lv_obj_t * parent)
 {
-    //Sets the styling.    
+   
     
-
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h, &h_style);
@@ -175,24 +190,32 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_style(motorTempLabel, &h_style);
 
     motor_bar = lv_bar_create(h, NULL);
+    //Sets the styling.    
+    lv_style_copy(&motor_colour, lv_bar_get_style(motor_bar, LV_BAR_STYLE_INDIC));
+    
     lv_bar_set_range(motor_bar, 0, 80);
     lv_bar_set_anim_time(motor_bar, 500);
     lv_bar_set_value(motor_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(motor_bar, 300, 60);
+    lv_bar_set_style(motor_bar, LV_BAR_STYLE_INDIC, &motor_colour);
 
     motor_temp_value = lv_label_create(parent, NULL);
     lv_label_set_text(motor_temp_value, "0 C");
     lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+
 
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
     lv_label_set_text(rineheart_label,"RINEHEART TEMP");
     lv_obj_set_style(rineheart_label, &h_style);
 
     rineheart_bar = lv_bar_create(h, NULL);
+    lv_style_copy(&rine_colour, lv_bar_get_style(rineheart_bar, LV_BAR_STYLE_INDIC));
+
     lv_bar_set_range(rineheart_bar, 0, 80);
     lv_bar_set_anim_time(rineheart_bar, 500);
     lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(rineheart_bar, 300, 60);
+    lv_bar_set_style(rineheart_bar, LV_BAR_STYLE_INDIC, &rine_colour);
 
     rineheart_temp_label = lv_label_create(parent, NULL);
     lv_label_set_text(rineheart_temp_label, "0C");
@@ -204,10 +227,13 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_style(accum_label, &h_style);
 
     accum_temp = lv_bar_create(h,NULL);
+    lv_style_copy(&accum_t_colour, lv_bar_get_style(accum_temp, LV_BAR_STYLE_INDIC));
+
     lv_bar_set_range(accum_temp, 0, 80);
     lv_bar_set_anim_time(accum_temp, 500);
     lv_bar_set_value(accum_temp, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_temp, 300, 60);
+    lv_bar_set_style(accum_temp, LV_BAR_STYLE_INDIC, &accum_t_colour);
 
     accum_temp_label = lv_label_create(parent, NULL);
     lv_label_set_text(accum_temp_label, "0C");
@@ -226,10 +252,14 @@ static void create_tab1(lv_obj_t * parent)
     lv_obj_set_style(accum_vert_label, &h_style);
 
     accum_volt = lv_bar_create(h2,NULL);
+    lv_style_copy(&accum_v_colour, lv_bar_get_style(accum_volt, LV_BAR_STYLE_INDIC));
+
+   
     lv_bar_set_range(accum_volt, 0, 600);
     lv_bar_set_anim_time(accum_volt, 500);
     lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_volt, 80, 260);
+    lv_bar_set_style(accum_volt, LV_BAR_STYLE_INDIC, &accum_v_colour);
 
     accum_volt_label = lv_label_create(parent, NULL);
     lv_label_set_text(accum_volt_label,"0V");
@@ -241,6 +271,10 @@ static void create_tab1(lv_obj_t * parent)
     can_iterator_task = lv_task_create(can_iterator,1000,LV_TASK_PRIO_MID,NULL);
     can_info_task = lv_task_create(can_info_handler,1000,LV_TASK_PRIO_MID,NULL);
 
+    motor_bar_colour_task = lv_task_create(motor_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
+    rine_bar_colour_task = lv_task_create(rine_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
+    accum_t_bar_colour_task = lv_task_create(accum_t_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
+    accum_v_bar_colour_task = lv_task_create(accum_v_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
 }
 
 static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
@@ -425,3 +459,78 @@ static void torque_slider_event(lv_obj_t * slider, lv_event_t event)
     }
 }
 
+static void motor_bar_colour(lv_task_t * t)
+{
+    if (lv_bar_get_value(motor_bar) < 5)
+    {
+        motor_colour.body.main_color = LV_COLOR_GREEN;
+        motor_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    if (lv_bar_get_value(motor_bar) > 5 && lv_bar_get_value(motor_bar) < 10)
+    {
+        motor_colour.body.main_color = LV_COLOR_ORANGE;
+        motor_colour.body.grad_color = LV_COLOR_ORANGE;
+    }
+    if (lv_bar_get_value(motor_bar) > 10)
+    {
+        motor_colour.body.main_color = LV_COLOR_RED;
+        motor_colour.body.grad_color = LV_COLOR_RED;
+    }
+}
+
+static void rine_bar_colour(lv_task_t * t)
+{
+    if (lv_bar_get_value(rineheart_bar) < 5)
+    {
+        rine_colour.body.main_color = LV_COLOR_GREEN;
+        rine_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    if (lv_bar_get_value(rineheart_bar) > 5 && lv_bar_get_value(rineheart_bar) < 10)
+    {
+        rine_colour.body.main_color = LV_COLOR_ORANGE;
+        rine_colour.body.grad_color = LV_COLOR_ORANGE;
+    }
+    if (lv_bar_get_value(rineheart_bar) > 10)
+    {
+        rine_colour.body.main_color = LV_COLOR_RED;
+        rine_colour.body.grad_color = LV_COLOR_RED;
+    }
+}
+
+static void accum_t_bar_colour(lv_task_t * t)
+{
+    if (lv_bar_get_value(accum_temp) < 5)
+    {
+        accum_t_colour.body.main_color = LV_COLOR_GREEN;
+        accum_t_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    if (lv_bar_get_value(accum_temp) > 5 && lv_bar_get_value(accum_temp) < 10)
+    {
+        accum_t_colour.body.main_color = LV_COLOR_ORANGE;
+        accum_t_colour.body.grad_color = LV_COLOR_ORANGE;
+    }
+    if (lv_bar_get_value(accum_temp) > 10)
+    {
+        accum_t_colour.body.main_color = LV_COLOR_RED;
+        accum_t_colour.body.grad_color = LV_COLOR_RED;
+    }
+}
+
+static void accum_v_bar_colour(lv_task_t * t)
+{
+    if (lv_bar_get_value(accum_volt) < 5)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_GREEN;
+        accum_v_colour.body.grad_color = LV_COLOR_GREEN;
+    }
+    if (lv_bar_get_value(accum_volt) > 5 && lv_bar_get_value(accum_volt) < 10)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_ORANGE;
+        accum_v_colour.body.grad_color = LV_COLOR_ORANGE;
+    }
+    if (lv_bar_get_value(accum_volt) > 10)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_RED;
+        accum_v_colour.body.grad_color = LV_COLOR_RED;
+    }
+}
