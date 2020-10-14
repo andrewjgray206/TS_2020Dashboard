@@ -69,16 +69,12 @@ extern void draw_drive_warning();
 extern void header_tab_create();
 
 static void traction_slider_event(lv_obj_t * slider, lv_event_t event);
-<<<<<<< HEAD
 static void torque_slider_event(lv_obj_t * slider, lv_event_t event);
 
 static void motor_bar_colour(lv_task_t * motor_bar_colour_task);
 static void rine_bar_colour(lv_task_t * rine_bar_colour_task);
 static void accum_t_bar_colour(lv_task_t * accum_t_bar_colour_task);
 static void accum_v_bar_colour(lv_task_t * accum_v_bar_colour_task);
-=======
-static void torque_switch_event(lv_obj_t * slider, lv_event_t event);
->>>>>>> 52a01a21006539530dfea37960ea8a772f2cb268
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -177,11 +173,8 @@ void menuInit(lv_theme_t * th)
 
 static void create_tab1(lv_obj_t * parent)
 {
-<<<<<<< HEAD
    
     
-=======
->>>>>>> 52a01a21006539530dfea37960ea8a772f2cb268
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h, &h_style);
@@ -427,7 +420,6 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
     }
-<<<<<<< HEAD
 }
 
 static void traction_slider_event(lv_obj_t * slider, lv_event_t event)
@@ -435,7 +427,7 @@ static void traction_slider_event(lv_obj_t * slider, lv_event_t event)
     if(event == LV_EVENT_VALUE_CHANGED) {
         static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
         snprintf(buf, 4, "%u%%", lv_slider_get_value(slider));
-        lv_label_set_text(traction_slider_label, buf);
+        //lv_label_set_text(traction_slider_label, buf);
     }
 }
 
@@ -444,7 +436,7 @@ static void torque_slider_event(lv_obj_t * slider, lv_event_t event)
     if(event == LV_EVENT_VALUE_CHANGED) {
         static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
         snprintf(buf, 4, "%u%%", lv_slider_get_value(slider));
-        lv_label_set_text(torque_slider_label, buf);
+        //lv_label_set_text(torque_slider_label, buf);
     }
 }
 
@@ -522,6 +514,4 @@ static void accum_v_bar_colour(lv_task_t * t)
         accum_v_colour.body.main_color = LV_COLOR_RED;
         accum_v_colour.body.grad_color = LV_COLOR_RED;
     }
-=======
->>>>>>> 52a01a21006539530dfea37960ea8a772f2cb268
 }
