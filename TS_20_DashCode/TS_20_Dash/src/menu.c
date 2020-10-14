@@ -68,8 +68,6 @@ extern void draw_precharge_warning();
 extern void draw_drive_warning();
 extern void header_tab_create();
 
-static void traction_slider_event(lv_obj_t * slider, lv_event_t event);
-static void torque_slider_event(lv_obj_t * slider, lv_event_t event);
 
 static void motor_bar_colour(lv_task_t * motor_bar_colour_task);
 static void rine_bar_colour(lv_task_t * rine_bar_colour_task);
@@ -419,24 +417,6 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
         lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
         screen3Init(lv_theme_night_init(63488, NULL));
-    }
-}
-
-static void traction_slider_event(lv_obj_t * slider, lv_event_t event)
-{
-    if(event == LV_EVENT_VALUE_CHANGED) {
-        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u%%", lv_slider_get_value(slider));
-        //lv_label_set_text(traction_slider_label, buf);
-    }
-}
-
-static void torque_slider_event(lv_obj_t * slider, lv_event_t event)
-{
-    if(event == LV_EVENT_VALUE_CHANGED) {
-        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u%%", lv_slider_get_value(slider));
-        //lv_label_set_text(torque_slider_label, buf);
     }
 }
 
