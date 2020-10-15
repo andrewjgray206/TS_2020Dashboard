@@ -59,7 +59,6 @@ void warning_lines()
     lv_style_copy(&apps_disagree_style,&precharge_warning_style);
     lv_style_copy(&trailbraking_active_style,&precharge_warning_style);
 
-
     driveWarningLine = lv_line_create(lv_scr_act(), NULL);
     lv_obj_set_hidden(driveWarningLine,true); //start as hidden.
     lv_line_set_points(driveWarningLine, line_points, 5);//Set the points
@@ -118,11 +117,11 @@ void header_tab_create()
 
     lv_obj_t * sym = lv_label_create(header, NULL);
     lv_label_set_text(sym, "TS 20");
-    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/10, 0);
+    lv_obj_align(sym, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI/4, 0);
 
     runtime = lv_label_create(header, NULL);
     lv_label_set_text(runtime, "0");
-    lv_obj_align(runtime, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/10, 0);
+    lv_obj_align(runtime, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/4, 0);
 
     lv_obj_set_pos(header, 0, 0);
 }
