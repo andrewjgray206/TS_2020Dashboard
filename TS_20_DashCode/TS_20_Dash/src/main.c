@@ -31,22 +31,16 @@ int main(void)
 	hw_init();
   
   load_splash();
-  //I wanna make a splash screen, that function will go here.
-  //splashScreen(blah blah);
   int i = 0;
-  while(i < 500)
+  while(i < 350) //3.5 seconds total.
   {
-      // delay of one second 
       lv_task_handler();
-      usleep(10000);
+      usleep(10000); // 1 second.
       i++;
-        //printf("%d seconds have passed\n", i + 1); 
   } 
-  //runs the main menu, the hub of our dashboard.
-  menuInit(lv_theme_night_init(63488, NULL));
-  //screen2Init(lv_theme_night_init(63488, NULL));
+
+  menuInit(lv_theme_night_init(63488, NULL));   //runs the main menu, the hub of our dashboard.
  
 	hw_loop();
-
   return 0;
 }

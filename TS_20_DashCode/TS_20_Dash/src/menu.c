@@ -129,8 +129,6 @@ uint16_t ddlist_value;
  */
 void menuInit(lv_theme_t * th)
 {   
-
-
     lv_style_copy(&h_style, &lv_style_transp);
     h_style.body.padding.inner = LV_DPI / 10;
     h_style.body.padding.left = LV_DPI / 4; 
