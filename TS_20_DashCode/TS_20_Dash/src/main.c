@@ -2,9 +2,9 @@
   ******************************************************************************
   * @file    main.c
   * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
-  * @version V1.0
+  * @version V1.1
   * @date    02-09-2020
-  * @brief   Default main function.
+  * @brief   Default main function with splashscreen and menu call.
   ******************************************************************************
 */
 
@@ -19,11 +19,6 @@
 
 #include "menu.h"
 #include "splash.h"
-
-#include "screen1.h"
-#include "screen2.h"
-#include "screen3.h"
-
 
 int main(void)
 {
@@ -40,7 +35,6 @@ int main(void)
   } 
 
   menuInit(lv_theme_night_init(63488, NULL));   //runs the main menu, the hub of our dashboard.
- 
 	hw_loop();
   return 0;
 }
