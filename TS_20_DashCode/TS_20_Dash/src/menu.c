@@ -536,29 +536,24 @@ static void accum_v_bar_colour(lv_task_t * t)
     float percentage = lv_bar_get_value(accum_volt);
     percentage = percentage/600;
     percentage = percentage*100;
-    if (percentage > 90)
-    {
-        accum_v_colour.body.main_color = LV_COLOR_RED;
-        accum_v_colour.body.grad_color = LV_COLOR_RED;
-    }
-    else if (percentage > 80)
-    {
-        accum_v_colour.body.main_color = LV_COLOR_ORANGE;
-        accum_v_colour.body.grad_color = LV_COLOR_ORANGE;
-    }
-    else if (percentage > 60)
-    {
-        accum_v_colour.body.main_color = LV_COLOR_YELLOW;
-        accum_v_colour.body.grad_color = LV_COLOR_YELLOW;
-    }
-    else if (percentage > 20)
+    if (percentage > 40)
     {
         accum_v_colour.body.main_color = LV_COLOR_GREEN;
         accum_v_colour.body.grad_color = LV_COLOR_GREEN;
     }
-    else if (percentage < 20)
+    else if (percentage > 20)
     {
-        accum_v_colour.body.main_color = LV_COLOR_BLUE;
-        accum_v_colour.body.grad_color = LV_COLOR_BLUE;
+        accum_v_colour.body.main_color = LV_COLOR_YELLOW;
+        accum_v_colour.body.grad_color = LV_COLOR_YELLOW;
+    }
+    else if (percentage > 10)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_ORANGE;
+        accum_v_colour.body.grad_color = LV_COLOR_ORANGE;
+    }
+    else if (percentage < 10)
+    {
+        accum_v_colour.body.main_color = LV_COLOR_RED;
+        accum_v_colour.body.grad_color = LV_COLOR_RED;
     }
 }
