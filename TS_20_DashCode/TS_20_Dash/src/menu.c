@@ -188,11 +188,14 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(motor_bar, 500);
     lv_bar_set_value(motor_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(motor_bar, 300, 60);
+
+    motor_colour.body.padding.top = motor_colour.body.padding.bottom = motor_colour.body.padding.left = motor_colour.body.padding.right = 10;
     lv_bar_set_style(motor_bar, LV_BAR_STYLE_INDIC, &motor_colour);
 
     motor_temp_value = lv_label_create(parent, NULL);
     lv_label_set_text(motor_temp_value, "0 C");
     lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+    
 
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
     lv_label_set_text(rineheart_label,"RINEHEART TEMP");
@@ -205,10 +208,12 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(rineheart_bar, 500);
     lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(rineheart_bar, 300, 60);
+
+    rine_colour.body.padding.top = rine_colour.body.padding.bottom = rine_colour.body.padding.left = rine_colour.body.padding.right = 10;
     lv_bar_set_style(rineheart_bar, LV_BAR_STYLE_INDIC, &rine_colour);
 
     rineheart_temp_label = lv_label_create(parent, NULL);
-    lv_label_set_text(rineheart_temp_label, "0C");
+    lv_label_set_text(rineheart_temp_label, "0 C");
     lv_obj_align(rineheart_temp_label, rineheart_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * accum_label = lv_label_create(h,NULL);
@@ -222,10 +227,12 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(accum_temp, 500);
     lv_bar_set_value(accum_temp, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_temp, 300, 60);
+
+    accum_t_colour.body.padding.top = accum_t_colour.body.padding.bottom = accum_t_colour.body.padding.left = accum_t_colour.body.padding.right = 10;
     lv_bar_set_style(accum_temp, LV_BAR_STYLE_INDIC, &accum_t_colour);
 
     accum_temp_label = lv_label_create(parent, NULL);
-    lv_label_set_text(accum_temp_label, "0C");
+    lv_label_set_text(accum_temp_label, "0 C");
     //lv_obj_set_pos(accum_temp_label, 20, 210);
     lv_obj_align(accum_temp_label, accum_temp, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
@@ -247,10 +254,11 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(accum_volt, 500);
     lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_volt, 80, 260);
+    accum_v_colour.body.padding.top = accum_v_colour.body.padding.bottom = accum_v_colour.body.padding.left = accum_v_colour.body.padding.right = 15;
     lv_bar_set_style(accum_volt, LV_BAR_STYLE_INDIC, &accum_v_colour);
 
     accum_volt_label = lv_label_create(parent, NULL);
-    lv_label_set_text(accum_volt_label,"0V");
+    lv_label_set_text(accum_volt_label,"0 V");
     lv_obj_align(accum_volt_label, accum_volt, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     warning_lines();

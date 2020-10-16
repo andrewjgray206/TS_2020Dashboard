@@ -112,7 +112,7 @@ void header_tab_create()
 
     ams_label = lv_label_create(header, NULL);
     lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
-    lv_obj_align(ams_label, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
+    lv_obj_align(ams_label, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/1, 0);
 
 
     lv_obj_t * sym = lv_label_create(header, NULL);
@@ -155,27 +155,30 @@ void can_iterator(lv_task_t * task)
 * for simulation testing. */
 {
     rineheart_highest_temp ++;
-    accum_lowest_voltage ++;
+    accum_lowest_voltage += 10;
     motor_highest_temp ++;
     max_accum_temp ++;
     heartbeat_counter++;
 
-    trailbraking_active++;
-    apps_disagree++;
+    //trailbraking_active++;
+    //apps_disagree++;
     
     if (motor_highest_temp == 200)
     {
         rineheart_highest_temp = 0;
-        accum_lowest_voltage = 0;
+        
         motor_highest_temp = 0;
         max_accum_temp = 0;
+    }
+    if (accum_lowest_voltage >= 600) {
+        accum_lowest_voltage = 0;
     }
     ams_state = ams_state + 1; // for ams state
     if (ams_state == 8)
     {
         ams_state = 0;
     }
-    switch (precharge_pressed)
+    /*switch (precharge_pressed)
     {
     case 0:
         precharge_pressed = 1;
@@ -195,7 +198,7 @@ void can_iterator(lv_task_t * task)
     case 1:
         drive_pressed = 0;
         break;
-    }    
+    }  */  
 }
 
 void gauge_handler(lv_task_t * task)
@@ -206,7 +209,7 @@ void gauge_handler(lv_task_t * task)
     if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
     {
         char temp[10] = "";
-        sprintf(temp,"%uC",motor_highest_temp);
+        sprintf(temp,"%u C",motor_highest_temp);
         lv_bar_set_value(motor_bar,motor_highest_temp,LV_ANIM_ON);
         lv_label_set_text(motor_temp_value,temp);
     }
@@ -215,7 +218,7 @@ void gauge_handler(lv_task_t * task)
     {
         int temperature = max_accum_temp; //convert to an int for printing purposes.
         char temp[] = "";
-        sprintf(temp,"%iC",temperature);
+        sprintf(temp,"%i C",temperature);
         lv_bar_set_value(accum_temp,max_accum_temp,LV_ANIM_ON);
         lv_label_set_text(accum_temp_label,temp);
         printf(temp);
@@ -224,7 +227,7 @@ void gauge_handler(lv_task_t * task)
     if(lv_bar_get_value(accum_volt)!= accum_lowest_voltage)
     {
         char temp[] = "";
-        sprintf(temp,"%uV",accum_lowest_voltage);
+        sprintf(temp,"%u V",accum_lowest_voltage);
         lv_bar_set_value(accum_volt,accum_lowest_voltage,LV_ANIM_ON);
         lv_label_set_text(accum_volt_label,temp);
     }
@@ -232,7 +235,7 @@ void gauge_handler(lv_task_t * task)
     if (lv_bar_get_value(rineheart_bar) != rineheart_highest_temp)
     {
         char temp[] = "";
-        sprintf(temp,"%uC",rineheart_highest_temp);
+        sprintf(temp,"%u C",rineheart_highest_temp);
         lv_bar_set_value(rineheart_bar,rineheart_highest_temp,LV_ANIM_ON);
         lv_label_set_text(rineheart_temp_label,temp);
     }
@@ -242,7 +245,7 @@ void can_info_handler(lv_task_t * task)
 {
         switch(ams_state){ //looks at the AMS_state can signal.
         case 0:
-            lv_label_set_text(ams_label,"AMS STATE: 0 IDLE");
+            lv_label_set_text(ams_label,"AMS STATE: 0 Idle");
         break;
         case 1:
             lv_label_set_text(ams_label,"AMS STATE: 1 Precharge Waiting");
@@ -254,7 +257,7 @@ void can_info_handler(lv_task_t * task)
             lv_label_set_text(ams_label,"AMS STATE: 3 Waiting for Drive");
         break;
         case 4:
-            lv_label_set_text(ams_label,"AMS STATE: 4 DRIVE");
+            lv_label_set_text(ams_label,"AMS STATE: 4 Drive");
         break;
         case 7:
             lv_label_set_text(ams_label,"AMS STATE: 7 Error");
