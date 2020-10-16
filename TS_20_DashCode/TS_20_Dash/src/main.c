@@ -2,9 +2,9 @@
   ******************************************************************************
   * @file    main.c
   * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
-  * @version V1.0
+  * @version V1.1
   * @date    02-09-2020
-  * @brief   Default main function.
+  * @brief   Default main function with splashscreen and menu call.
   ******************************************************************************
 */
 
@@ -49,5 +49,7 @@ int main(void)
  
 	hw_loop();
 
+  menuInit(lv_theme_night_init(63488, NULL));   //runs the main menu, the hub of our dashboard.
+	hw_loop();
   return 0;
 }

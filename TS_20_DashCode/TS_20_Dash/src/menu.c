@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    menu.c
   * @author  Andrew Gray, Christian Lazarovski, Tansel Kahrahman
-  * @version V1.2
+  * @version V1.3
   * @date    14-10-2020
   * @brief   Menu screens, intitial screen on startup with important information
   * regarding hardware status.
@@ -52,7 +52,6 @@ extern lv_obj_t * ams_label;
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
 static void create_tab1(lv_obj_t * parent);
 static void create_tab2(lv_obj_t * parent);
 static void create_tab3(lv_obj_t * parent);
@@ -67,7 +66,6 @@ extern void can_info_handler(lv_task_t * task);
 extern void draw_precharge_warning();
 extern void draw_drive_warning();
 extern void header_tab_create();
-
 
 static void motor_bar_colour(lv_task_t * motor_bar_colour_task);
 static void rine_bar_colour(lv_task_t * rine_bar_colour_task);
@@ -105,7 +103,6 @@ static lv_obj_t * torque_switch_label;
 static lv_obj_t * ddlist;
 
 static lv_theme_t * th;
-
 static lv_style_t h_style;
 
 static lv_style_t motor_colour;
@@ -124,13 +121,10 @@ uint16_t ddlist_value;
  **********************/
 
 /**
- * Create a test screen with a lot objects and apply the given theme on them
  * @param th pointer to a theme
  */
 void menuInit(lv_theme_t * th)
 {   
-
-
     lv_style_copy(&h_style, &lv_style_transp);
     h_style.body.padding.inner = LV_DPI / 10;
     h_style.body.padding.left = LV_DPI / 4; 
@@ -146,34 +140,34 @@ void menuInit(lv_theme_t * th)
     lv_obj_t * scr = lv_cont_create(NULL, NULL); //creates the screen scr
     lv_disp_load_scr(scr);
 
-    lv_obj_t * tv = lv_tabview_create(scr, NULL); //allows us to add tabs in more easily later.
+    //creates the tabview
+    lv_obj_t * tv = lv_tabview_create(scr, NULL);
     lv_obj_set_size(tv, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL));
     lv_obj_set_pos(tv, 0,50);
+    //create the tabs
     lv_obj_t * tab1 = lv_tabview_add_tab(tv, "Home Screen"); //tab1.
-    lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Tab 2");
-    lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Tab 3");
+    lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Nav and TV Control");
+    lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Nav Buttons for Testing");
 
     //END SCREEN SETUP
-
-    lv_tabview_set_btns_hidden(tv, true); //tabs are hidden.
+    lv_tabview_set_btns_hidden(tv, true); //tab buttons are hidden
+                                          //swiping to get between tabs.
 
     //BEGIN SCREEN CONTENT.
-    create_tab1(tab1);
-    create_tab2(tab2);
+    header_tab_create();
+    create_tab1(tab1); //each tab uses 
+    create_tab2(tab2); //it's own function.
     create_tab3(tab3);
 
-    header_tab_create();
+
     //END SCREEN CONTENT
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-
 static void create_tab1(lv_obj_t * parent)
-{
-   
-    
+{ 
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
     lv_obj_set_style(h, &h_style);
@@ -181,7 +175,6 @@ static void create_tab1(lv_obj_t * parent)
     lv_cont_set_fit(h, LV_FIT_TIGHT);
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
     lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 200, 20);
-
 
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
     lv_label_set_text(motorTempLabel,"MOTOR TEMP");
@@ -201,7 +194,6 @@ static void create_tab1(lv_obj_t * parent)
     lv_label_set_text(motor_temp_value, "0 C");
     lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
-
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
     lv_label_set_text(rineheart_label,"RINEHEART TEMP");
     lv_obj_set_style(rineheart_label, &h_style);
@@ -217,7 +209,6 @@ static void create_tab1(lv_obj_t * parent)
 
     rineheart_temp_label = lv_label_create(parent, NULL);
     lv_label_set_text(rineheart_temp_label, "0C");
-    //lv_obj_set_pos(rineheart_temp_label, 20, 137);
     lv_obj_align(rineheart_temp_label, rineheart_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * accum_label = lv_label_create(h,NULL);
@@ -252,7 +243,6 @@ static void create_tab1(lv_obj_t * parent)
     accum_volt = lv_bar_create(h2,NULL);
     lv_style_copy(&accum_v_colour, lv_bar_get_style(accum_volt, LV_BAR_STYLE_INDIC));
 
-   
     lv_bar_set_range(accum_volt, 0, 600);
     lv_bar_set_anim_time(accum_volt, 500);
     lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
@@ -265,14 +255,14 @@ static void create_tab1(lv_obj_t * parent)
 
     warning_lines();
 
-    gauge_handler_task = lv_task_create(gauge_handler,1000,LV_TASK_PRIO_MID,NULL);
+    gauge_handler_task = lv_task_create(gauge_handler,100,LV_TASK_PRIO_HIGH,NULL);
     can_iterator_task = lv_task_create(can_iterator,1000,LV_TASK_PRIO_MID,NULL);
-    can_info_task = lv_task_create(can_info_handler,1000,LV_TASK_PRIO_MID,NULL);
+    can_info_task = lv_task_create(can_info_handler,100,LV_TASK_PRIO_MID,NULL);
 
-    motor_bar_colour_task = lv_task_create(motor_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
-    rine_bar_colour_task = lv_task_create(rine_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
-    accum_t_bar_colour_task = lv_task_create(accum_t_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
-    accum_v_bar_colour_task = lv_task_create(accum_v_bar_colour, 500, LV_TASK_PRIO_MID, NULL);
+    motor_bar_colour_task = lv_task_create(motor_bar_colour, 100, LV_TASK_PRIO_HIGH, NULL);
+    rine_bar_colour_task = lv_task_create(rine_bar_colour, 100, LV_TASK_PRIO_HIGH, NULL);
+    accum_t_bar_colour_task = lv_task_create(accum_t_bar_colour, 100, LV_TASK_PRIO_HIGH, NULL);
+    accum_v_bar_colour_task = lv_task_create(accum_v_bar_colour, 100, LV_TASK_PRIO_HIGH, NULL);
 }
 
 static void create_tab2(lv_obj_t * parent) //this is gonna have our nav buttons.
