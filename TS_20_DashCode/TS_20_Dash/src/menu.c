@@ -455,7 +455,7 @@ static void motor_bar_colour(lv_task_t * t)
         motor_colour.body.main_color = LV_COLOR_GREEN;
         motor_colour.body.grad_color = LV_COLOR_GREEN;
     }
-    else if (percentage < 20)
+    else if (percentage <= 20)
     {
         motor_colour.body.main_color = LV_COLOR_BLUE;
         motor_colour.body.grad_color = LV_COLOR_BLUE;
@@ -489,7 +489,7 @@ static void rine_bar_colour(lv_task_t * t)
         rine_colour.body.main_color = LV_COLOR_GREEN;
         rine_colour.body.grad_color = LV_COLOR_GREEN;
     }
-    else if (percentage < 20)
+    else if (percentage <= 20)
     {
         rine_colour.body.main_color = LV_COLOR_BLUE;
         rine_colour.body.grad_color = LV_COLOR_BLUE;
@@ -523,7 +523,7 @@ static void accum_t_bar_colour(lv_task_t * t)
         accum_t_colour.body.main_color = LV_COLOR_GREEN;
         accum_t_colour.body.grad_color = LV_COLOR_GREEN;
     }
-    else if (percentage < 20)
+    else if (percentage <= 20)
     {
         accum_t_colour.body.main_color = LV_COLOR_BLUE;
         accum_t_colour.body.grad_color = LV_COLOR_BLUE;
@@ -550,7 +550,7 @@ static void accum_v_bar_colour(lv_task_t * t)
         accum_v_colour.body.main_color = LV_COLOR_ORANGE;
         accum_v_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    else if (percentage < 10)
+    else if (percentage <= 10)
     {
         accum_v_colour.body.main_color = LV_COLOR_RED;
         accum_v_colour.body.grad_color = LV_COLOR_RED;
