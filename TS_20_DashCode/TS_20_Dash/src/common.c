@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+//extern CAN variables.
 extern int heartbeat_counter;
 extern float max_accum_temp;
 extern uint16_t accum_lowest_voltage;
@@ -15,6 +16,7 @@ extern bool drive_pressed;
 extern bool apps_disagree;
 extern bool trailbraking_active;
 
+//objects which are changed or used in many places.
 lv_task_t * gauge_handler_task;
 lv_task_t * can_iterator_task;
 lv_task_t * can_info_task;
@@ -44,12 +46,13 @@ lv_style_t precharge_warning_style;
 lv_style_t drive_warning_style;
 lv_style_t apps_disagree_style;
 lv_style_t trailbraking_active_style;
-static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}};
-static lv_point_t trailbraking_points[] = {{400,480},{800,480}};
+
+static lv_point_t line_points[] = {{0,0},{800,0},{800, 480},{0, 480},{0,0}}; //lines draw in the order you put the coords.
+static lv_point_t trailbraking_points[] = {{400,480},{800,480}}; //coords on the screen.
 static lv_point_t disagree_points[] = {{0,480},{400,480}};
 
 void warning_lines()
-{
+{ // sets the warning line styles and gets them ready to be drawn.
     lv_style_copy(&precharge_warning_style, &lv_style_plain);
     precharge_warning_style.line.color = LV_COLOR_RED;
     precharge_warning_style.line.width = 30;
@@ -77,35 +80,34 @@ void warning_lines()
 }
 
 void draw_precharge_warning()
-//UNFINISHED IMPLMENETAION, ANDREW WILL GET BACK TO THIS.
-{
+{ // PRECHARGE WARNING draw function
     precharge_warning_style.line.color = LV_COLOR_ORANGE;
     lv_line_set_style(prechargeWarningLine, LV_LINE_STYLE_MAIN, &precharge_warning_style);
     lv_obj_set_hidden(prechargeWarningLine,false);
 }
 
 void draw_drive_warning()
-{
+{ // Drive CAN warning function
     drive_warning_style.line.color = LV_COLOR_GREEN;
     lv_line_set_style(driveWarningLine, LV_LINE_STYLE_MAIN, &drive_warning_style);
     lv_obj_set_hidden(driveWarningLine,false);
 }
 
 void draw_disagree_warning()
-{
+{ // apps disagree warning function
     lv_line_set_style(appsDisagreeLine, LV_LINE_STYLE_MAIN, &apps_disagree_style);
     lv_obj_set_hidden(appsDisagreeLine,false);
 }
 
 void draw_trailbrake_warning()
-{
+{ // trailbrake warning function
     trailbraking_active_style.line.color = LV_COLOR_BLUE;
     lv_line_set_style(trailbrakingLine, LV_LINE_STYLE_MAIN, &trailbraking_active_style);
     lv_obj_set_hidden(trailbrakingLine,false);
 }
 
 void header_tab_create()
-{
+{ //creates the header for the tabview screen.
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL));
     lv_obj_set_height(header, 50);
@@ -113,7 +115,6 @@ void header_tab_create()
     ams_label = lv_label_create(header, NULL);
     lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
     lv_obj_align(ams_label, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI/1, 0);
-
 
     lv_obj_t * sym = lv_label_create(header, NULL);
     lv_label_set_text(sym, "TS 20");
@@ -127,7 +128,7 @@ void header_tab_create()
 }
 
 void header_create()
-{
+{ //creates header for a window view screen (with x button on the right)
     header = lv_cont_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_width(header, lv_disp_get_hor_res(NULL) - 50);
     lv_obj_set_height(header, 50);
@@ -135,7 +136,6 @@ void header_create()
     ams_label = lv_label_create(header, NULL);
     lv_label_set_text(ams_label, "AMS STATE: 0 Idle");
     lv_obj_align(ams_label, NULL, LV_ALIGN_CENTER, LV_DPI/10, 0);
-
 
     lv_obj_t * sym = lv_label_create(header, NULL);
     lv_label_set_text(sym, "TS 20");
@@ -202,10 +202,12 @@ void can_iterator(lv_task_t * task)
 }
 
 void gauge_handler(lv_task_t * task)
-{
+{ // does the gauge updating.
+    //updates the heartbeat.
     char str[10];
     sprintf(str,"%d",heartbeat_counter);
     lv_label_set_text(runtime,str);
+
     if(lv_bar_get_value(motor_bar)!= motor_highest_temp)
     {
         char temp[10] = "";
@@ -242,7 +244,7 @@ void gauge_handler(lv_task_t * task)
 }
 
 void can_info_handler(lv_task_t * task)
-{
+{ // does the Warning handling.
         switch(ams_state){ //looks at the AMS_state can signal.
         case 0:
             lv_label_set_text(ams_label,"AMS STATE: 0 Idle");
@@ -263,7 +265,7 @@ void can_info_handler(lv_task_t * task)
             lv_label_set_text(ams_label,"AMS STATE: 7 Error");
     }
 
-    //START PRECHARGE AND DRIVE PRESSED CHECKS.
+    //START BORDER WARNING CHECKS.
     switch (drive_pressed)
     {
         case 0:

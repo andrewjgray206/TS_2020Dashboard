@@ -31,6 +31,7 @@
  *      EXTERN
  *      VARIABLES
  *********************/
+// FROM driver.c
 extern int ams_state;
 extern bool precharge_pressed;
 extern bool drive_pressed;
@@ -39,12 +40,31 @@ extern uint16_t accum_lowest_voltage;
 extern uint16_t motor_highest_temp;
 extern uint16_t rineheart_highest_temp;
 
+//FROM common.c
 extern lv_obj_t * driveWarningLine;
 extern lv_obj_t * prechargeWarningLine;
 extern lv_style_t style_line;
 extern lv_point_t line_points[];
 extern lv_obj_t * header;
 extern lv_obj_t * ams_label;
+
+extern lv_task_t * gauge_handler_task;
+extern lv_task_t * can_iterator_task;
+extern lv_task_t * can_info_task;
+
+extern lv_obj_t * header;
+
+extern lv_obj_t * motor_bar;
+extern lv_obj_t * motor_temp_value;
+
+extern lv_obj_t * rineheart_bar;
+extern lv_obj_t * rineheart_temp_label;
+
+extern lv_obj_t * accum_temp;
+extern lv_obj_t * accum_temp_label;
+
+extern lv_obj_t * accum_volt;
+extern lv_obj_t * accum_volt_label;
 /**********************
  *      TYPEDEFS
  **********************/
@@ -60,6 +80,7 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton2Handler(lv_obj_t * obj, lv_event_t event);
 static void navButton3Handler(lv_obj_t * obj, lv_event_t event);
 
+//FROM common.c
 extern void gauge_handler(lv_task_t * task);
 extern void can_iterator(lv_task_t * task);
 extern void can_info_handler(lv_task_t * task);
@@ -74,28 +95,10 @@ static void accum_v_bar_colour(lv_task_t * accum_v_bar_colour_task);
 /**********************
  *  STATIC VARIABLES
  **********************/
-extern lv_task_t * gauge_handler_task;
-extern lv_task_t * can_iterator_task;
-extern lv_task_t * can_info_task;
-
 static lv_task_t * motor_bar_colour_task;
 static lv_task_t * rine_bar_colour_task;
 static lv_task_t * accum_t_bar_colour_task;
 static lv_task_t * accum_v_bar_colour_task;
-
-extern lv_obj_t * header;
-
-extern lv_obj_t * motor_bar;
-extern lv_obj_t * motor_temp_value;
-
-extern lv_obj_t * rineheart_bar;
-extern lv_obj_t * rineheart_temp_label;
-
-extern lv_obj_t * accum_temp;
-extern lv_obj_t * accum_temp_label;
-
-extern lv_obj_t * accum_volt;
-extern lv_obj_t * accum_volt_label;
 
 static lv_obj_t * traction_switch_label;
 static lv_obj_t * torque_switch_label;
@@ -110,7 +113,7 @@ static lv_style_t rine_colour;
 static lv_style_t accum_t_colour;
 static lv_style_t accum_v_colour;
 
-uint16_t ddlist_value;
+static uint16_t ddlist_value;
 
 /**********************
  *      MACROS
@@ -124,7 +127,7 @@ uint16_t ddlist_value;
  * @param th pointer to a theme
  */
 void menuInit(lv_theme_t * th)
-{   
+{   //INITALISES and creates the menu.
     lv_style_copy(&h_style, &lv_style_transp);
     h_style.body.padding.inner = LV_DPI / 10;
     h_style.body.padding.left = LV_DPI / 4; 
@@ -158,15 +161,13 @@ void menuInit(lv_theme_t * th)
     create_tab1(tab1); //each tab uses 
     create_tab2(tab2); //it's own function.
     create_tab3(tab3);
-
-
     //END SCREEN CONTENT
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static void create_tab1(lv_obj_t * parent)
+static void create_tab1(lv_obj_t * parent) //TAB 1 CREATION.
 { 
     //creates a container "h". This becomes the parent object for all of our widgets.
     lv_obj_t * h = lv_cont_create(parent, NULL); 
@@ -188,14 +189,11 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(motor_bar, 500);
     lv_bar_set_value(motor_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(motor_bar, 300, 60);
-
-    motor_colour.body.padding.top = motor_colour.body.padding.bottom = motor_colour.body.padding.left = motor_colour.body.padding.right = 10;
     lv_bar_set_style(motor_bar, LV_BAR_STYLE_INDIC, &motor_colour);
 
     motor_temp_value = lv_label_create(parent, NULL);
     lv_label_set_text(motor_temp_value, "0 C");
     lv_obj_align(motor_temp_value, motor_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-    
 
     lv_obj_t * rineheart_label = lv_label_create(h,NULL);
     lv_label_set_text(rineheart_label,"RINEHEART TEMP");
@@ -208,12 +206,10 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(rineheart_bar, 500);
     lv_bar_set_value(rineheart_bar, 0, LV_ANIM_ON);
     lv_obj_set_size(rineheart_bar, 300, 60);
-
-    rine_colour.body.padding.top = rine_colour.body.padding.bottom = rine_colour.body.padding.left = rine_colour.body.padding.right = 10;
     lv_bar_set_style(rineheart_bar, LV_BAR_STYLE_INDIC, &rine_colour);
 
     rineheart_temp_label = lv_label_create(parent, NULL);
-    lv_label_set_text(rineheart_temp_label, "0 C");
+    lv_label_set_text(rineheart_temp_label, "0C");
     lv_obj_align(rineheart_temp_label, rineheart_bar, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
     lv_obj_t * accum_label = lv_label_create(h,NULL);
@@ -227,42 +223,40 @@ static void create_tab1(lv_obj_t * parent)
     lv_bar_set_anim_time(accum_temp, 500);
     lv_bar_set_value(accum_temp, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_temp, 300, 60);
-
-    accum_t_colour.body.padding.top = accum_t_colour.body.padding.bottom = accum_t_colour.body.padding.left = accum_t_colour.body.padding.right = 10;
     lv_bar_set_style(accum_temp, LV_BAR_STYLE_INDIC, &accum_t_colour);
 
     accum_temp_label = lv_label_create(parent, NULL);
-    lv_label_set_text(accum_temp_label, "0 C");
-    //lv_obj_set_pos(accum_temp_label, 20, 210);
+    lv_label_set_text(accum_temp_label, "0C");
     lv_obj_align(accum_temp_label, accum_temp, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
-    lv_obj_t * h2 = lv_cont_create(parent, NULL); 
-    lv_obj_set_style(h2, &h_style);
-    lv_obj_set_click(h2, false);
-    lv_cont_set_fit(h2, LV_FIT_TIGHT);
-    lv_cont_set_layout(h2, LV_LAYOUT_COL_M);
-    lv_obj_align(h2, parent, LV_ALIGN_IN_TOP_LEFT, 550, 20);
+    //vertical container for the accumulator voltage.
+    lv_obj_t * vert_container = lv_cont_create(parent, NULL); 
+    lv_obj_set_style(vert_container, &h_style);
+    lv_obj_set_click(vert_container, false);
+    lv_cont_set_fit(vert_container, LV_FIT_TIGHT);
+    lv_cont_set_layout(vert_container, LV_LAYOUT_COL_M);
+    lv_obj_align(vert_container, parent, LV_ALIGN_IN_TOP_LEFT, 550, 20);
 
-    lv_obj_t * accum_vert_label = lv_label_create(h2,NULL);
+    lv_obj_t * accum_vert_label = lv_label_create(vert_container,NULL);
     lv_label_set_text(accum_vert_label,"ACCUMULATOR VOLTS");
     lv_obj_set_style(accum_vert_label, &h_style);
 
-    accum_volt = lv_bar_create(h2,NULL);
+    accum_volt = lv_bar_create(vert_container,NULL);
     lv_style_copy(&accum_v_colour, lv_bar_get_style(accum_volt, LV_BAR_STYLE_INDIC));
 
     lv_bar_set_range(accum_volt, 0, 600);
     lv_bar_set_anim_time(accum_volt, 500);
     lv_bar_set_value(accum_volt, 0, LV_ANIM_ON);
     lv_obj_set_size(accum_volt, 80, 260);
-    accum_v_colour.body.padding.top = accum_v_colour.body.padding.bottom = accum_v_colour.body.padding.left = accum_v_colour.body.padding.right = 15;
     lv_bar_set_style(accum_volt, LV_BAR_STYLE_INDIC, &accum_v_colour);
 
     accum_volt_label = lv_label_create(parent, NULL);
-    lv_label_set_text(accum_volt_label,"0 V");
+    lv_label_set_text(accum_volt_label,"0V");
     lv_obj_align(accum_volt_label, accum_volt, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
-    warning_lines();
+    warning_lines(); //call from common.c
 
+    //TASK CREATION.
     gauge_handler_task = lv_task_create(gauge_handler,100,LV_TASK_PRIO_HIGH,NULL);
     can_iterator_task = lv_task_create(can_iterator,1000,LV_TASK_PRIO_MID,NULL);
     can_info_task = lv_task_create(can_info_handler,100,LV_TASK_PRIO_MID,NULL);
@@ -343,21 +337,19 @@ static void create_tab3(lv_obj_t * parent)
     lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
     lv_obj_t * navButton1 = lv_btn_create(h,NULL);
-    lv_obj_set_event_cb(navButton1, navButton1Handler);
+    lv_obj_set_event_cb(navButton1, navButton1Handler);//Give the button a function
     lv_obj_t * navButton1Label = lv_label_create(navButton1,NULL);
     lv_label_set_text(navButton1Label,"To Screen1.c");
 
     lv_obj_t * navButton2 = lv_btn_create(h,NULL);
-    lv_obj_set_event_cb(navButton2, navButton2Handler);
+    lv_obj_set_event_cb(navButton2, navButton2Handler);//Give the button a function
     lv_obj_t * navButton2Label = lv_label_create(navButton2,NULL);
     lv_label_set_text(navButton2Label,"To Screen2.c");
 
     lv_obj_t * navButton3 = lv_btn_create(h,NULL);
-    lv_obj_set_event_cb(navButton3, navButton3Handler);
+    lv_obj_set_event_cb(navButton3, navButton3Handler); //Give the button a function
     lv_obj_t * navButton3Label = lv_label_create(navButton3,NULL);
     lv_label_set_text(navButton3Label,"To Screen3.c");
-
-
 }
 
 static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
@@ -367,7 +359,7 @@ static void navButton1Handler(lv_obj_t * obj, lv_event_t event)
     {
         ddlist_value = lv_ddlist_get_selected(ddlist);
         
-        lv_task_del(can_iterator_task);
+        lv_task_del(can_iterator_task); //tasks need to be deleted too.
         lv_task_del(gauge_handler_task);
         lv_obj_del(currentScreen);  //literally just deletes the screen.
 
@@ -426,8 +418,6 @@ static void navButton3Handler(lv_obj_t * obj, lv_event_t event)
 * THESE (as well as the bar values)
 * themselves, need to be changed
 * if these values change. */
-
-
 static void motor_bar_colour(lv_task_t * t)
 {
     float percentage = lv_bar_get_value(motor_bar);
@@ -435,22 +425,22 @@ static void motor_bar_colour(lv_task_t * t)
     percentage = percentage*100;
     printf("Percentage = %f",percentage);
 
-    if (percentage > 90)
+    if (percentage >= 90)
     {
         motor_colour.body.main_color = LV_COLOR_RED;
         motor_colour.body.grad_color = LV_COLOR_RED;
     }
-    else if (percentage > 80)
+    else if (percentage >= 80)
     {
         motor_colour.body.main_color = LV_COLOR_ORANGE;
         motor_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    else if (percentage > 60)
+    else if (percentage >= 60)
     {
         motor_colour.body.main_color = LV_COLOR_YELLOW;
         motor_colour.body.grad_color = LV_COLOR_YELLOW;
     }
-    else if (percentage > 20)
+    else if (percentage >= 20)
     {
         motor_colour.body.main_color = LV_COLOR_GREEN;
         motor_colour.body.grad_color = LV_COLOR_GREEN;
@@ -469,22 +459,22 @@ static void rine_bar_colour(lv_task_t * t)
     percentage = percentage*100;
     printf("Percentage = %f",percentage);
 
-    if (percentage > 90)
+    if (percentage >= 90)
     {
         rine_colour.body.main_color = LV_COLOR_RED;
         rine_colour.body.grad_color = LV_COLOR_RED;
     }
-    else if (percentage > 80)
+    else if (percentage >= 80)
     {
         rine_colour.body.main_color = LV_COLOR_ORANGE;
         rine_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    else if (percentage > 60)
+    else if (percentage >= 60)
     {
         rine_colour.body.main_color = LV_COLOR_YELLOW;
         rine_colour.body.grad_color = LV_COLOR_YELLOW;
     }
-    else if (percentage > 20)
+    else if (percentage >= 20)
     {
         rine_colour.body.main_color = LV_COLOR_GREEN;
         rine_colour.body.grad_color = LV_COLOR_GREEN;
@@ -503,22 +493,22 @@ static void accum_t_bar_colour(lv_task_t * t)
     percentage = percentage*100;
     printf("Percentage = %f",percentage);
 
-    if (percentage > 90)
+    if (percentage >= 90)
     {
         accum_t_colour.body.main_color = LV_COLOR_RED;
         accum_t_colour.body.grad_color = LV_COLOR_RED;
     }
-    else if (percentage > 80)
+    else if (percentage >= 80)
     {
         accum_t_colour.body.main_color = LV_COLOR_ORANGE;
         accum_t_colour.body.grad_color = LV_COLOR_ORANGE;
     }
-    else if (percentage > 60)
+    else if (percentage >= 60)
     {
         accum_t_colour.body.main_color = LV_COLOR_YELLOW;
         accum_t_colour.body.grad_color = LV_COLOR_YELLOW;
     }
-    else if (percentage > 20)
+    else if (percentage >= 20)
     {
         accum_t_colour.body.main_color = LV_COLOR_GREEN;
         accum_t_colour.body.grad_color = LV_COLOR_GREEN;
@@ -535,17 +525,17 @@ static void accum_v_bar_colour(lv_task_t * t)
     float percentage = lv_bar_get_value(accum_volt);
     percentage = percentage/600;
     percentage = percentage*100;
-    if (percentage > 40)
+    if (percentage >= 40)
     {
         accum_v_colour.body.main_color = LV_COLOR_GREEN;
         accum_v_colour.body.grad_color = LV_COLOR_GREEN;
     }
-    else if (percentage > 20)
+    else if (percentage >= 20)
     {
         accum_v_colour.body.main_color = LV_COLOR_YELLOW;
         accum_v_colour.body.grad_color = LV_COLOR_YELLOW;
     }
-    else if (percentage > 10)
+    else if (percentage >= 10)
     {
         accum_v_colour.body.main_color = LV_COLOR_ORANGE;
         accum_v_colour.body.grad_color = LV_COLOR_ORANGE;
