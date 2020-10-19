@@ -8,7 +8,7 @@
 
 // Program Variables
 bool precharge_pressed = 0;
-bool drive_pressed = 1; //this is so that we can see the alerts alternating.
+bool drive_pressed = 0;//1; //this is so that we can see the alerts alternating.
 bool apps_disagree = 0;
 bool trailbraking_active = 0;
 
