@@ -177,6 +177,13 @@ static void create_tab1(lv_obj_t * parent) //TAB 1 CREATION.
     lv_cont_set_layout(h, LV_LAYOUT_COL_M);
     lv_obj_align(h, parent, LV_ALIGN_IN_TOP_LEFT, 200, 20);
 
+    // Padding used by all bars.
+    lv_style_t style_padding, style_padding2;
+    style_padding.body.padding.bottom = style_padding.body.padding.top = style_padding.body.padding.left = style_padding.body.padding.right = 10; // Horizontal bars
+    style_padding2.body.padding.bottom = style_padding2.body.padding.top = style_padding2.body.padding.left = style_padding2.body.padding.right = 13; // Vertical bar (accum voltage)
+    
+
+
     lv_obj_t * motorTempLabel = lv_label_create(h,NULL);
     lv_label_set_text(motorTempLabel,"MOTOR TEMP");
     lv_obj_set_style(motorTempLabel, &h_style);
@@ -184,6 +191,7 @@ static void create_tab1(lv_obj_t * parent) //TAB 1 CREATION.
     motor_bar = lv_bar_create(h, NULL);
     //Sets the styling.    
     lv_style_copy(&motor_colour, lv_bar_get_style(motor_bar, LV_BAR_STYLE_INDIC));
+    motor_colour.body.padding = style_padding.body.padding; // Apply paddding onto bar from padding set above.
     
     lv_bar_set_range(motor_bar, 0, 80);
     lv_bar_set_anim_time(motor_bar, 500);
@@ -201,6 +209,7 @@ static void create_tab1(lv_obj_t * parent) //TAB 1 CREATION.
 
     rineheart_bar = lv_bar_create(h, NULL);
     lv_style_copy(&rine_colour, lv_bar_get_style(rineheart_bar, LV_BAR_STYLE_INDIC));
+    rine_colour.body.padding = style_padding.body.padding; // Apply paddding onto bar from padding set above.
 
     lv_bar_set_range(rineheart_bar, 0, 80); //max val 80
     lv_bar_set_anim_time(rineheart_bar, 500);
@@ -218,6 +227,7 @@ static void create_tab1(lv_obj_t * parent) //TAB 1 CREATION.
 
     accum_temp = lv_bar_create(h,NULL);
     lv_style_copy(&accum_t_colour, lv_bar_get_style(accum_temp, LV_BAR_STYLE_INDIC));
+    accum_t_colour.body.padding = style_padding.body.padding; // Apply paddding onto bar from padding set above.    
 
     lv_bar_set_range(accum_temp, 0, 80);
     lv_bar_set_anim_time(accum_temp, 500);
@@ -243,6 +253,7 @@ static void create_tab1(lv_obj_t * parent) //TAB 1 CREATION.
 
     accum_volt = lv_bar_create(vert_container,NULL);
     lv_style_copy(&accum_v_colour, lv_bar_get_style(accum_volt, LV_BAR_STYLE_INDIC));
+    accum_v_colour.body.padding = style_padding2.body.padding; // Apply paddding onto bar from padding set above. 
 
     lv_bar_set_range(accum_volt, 0, 600);
     lv_bar_set_anim_time(accum_volt, 500);
